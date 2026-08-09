@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Arrange the Sentence - AI Powered</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root{--bg:#FFF8F0;--fg:#4A3728;--muted:#9B8B7A;--accent:#FF6B6B;--accent2:#4ECDC4;--card:#FFF;--border:#E8DDD0;--bank-bg:#E8F4FD;--bank-bd:#A8CCE8;--sent-bg:#FFF9E6;--sent-bd:#E8D080;--success:#6BCB77;--error:#FF6B6B;--p1:#FF9AA2;--p1dark:#C62828;--p2:#80DEEA;--p2dark:#00695C;--slot-bg:#F5F0E8;--slot-border:#D5C8B8}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radial-gradient(circle,#E8DDD0 1px,transparent 1px);background-size:28px 28px;color:var(--fg);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column}
+        .bg-blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;opacity:.07;filter:blur(2px)}
+        .bg-blob-1{width:320px;height:320px;background:#FF9AA2;top:-100px;right:-80px;animation:bd 22s ease-in-out infinite}
+        .bg-blob-2{width:240px;height:240px;background:#BAE1FF;bottom:-60px;left:-50px;animation:bd 17s ease-in-out infinite reverse}
+        .bg-blob-3{width:180px;height:180px;background:#BAFFC9;top:45%;right:-40px;animation:bd 19s ease-in-out infinite 4s}
+        @keyframes bd{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(25px,-35px) scale(1.06)}66%{transform:translate(-18px,25px) scale(.94)}}
+        .confetti-layer{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden}
+        .confetti-bit{position:absolute;animation:cfall var(--dur,1.6s) ease-out var(--delay,0s) forwards;opacity:0}
+        @keyframes cfall{0%{transform:translateY(0) rotate(0) scale(1);opacity:1}30%{opacity:1}100%{transform:translateY(calc(100vh + 40px)) translateX(var(--dx,0)) rotate(var(--spin,600deg)) scale(.4);opacity:0}}
+        .game-container{max-width:960px;margin:0 auto;padding:16px;position:relative;z-index:1;flex:1}
+        .screen{display:none}.screen.active{display:block}
+
+        /* ===== MODE SELECT ===== */
+        .mode-select{text-align:center;padding:40px 20px 10px}
+        .mode-title{font-family:'Fredoka One',cursive;font-size:44px;background:linear-gradient(135deg,#FF6B6B,#FFB74D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+        .mode-sub{color:var(--muted);font-size:17px;font-weight:600;margin-bottom:12px}
+        .tense-indicator{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:14px;font-weight:700;font-size:15px;margin-bottom:32px;background:linear-gradient(135deg,#E8F5E9,#C8E6C9);color:#2E7D32;border:2px solid #A5D6A7}
+        .tense-indicator i{font-size:16px}
+        .mode-cards{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+        .mode-card{width:270px;padding:38px 26px 30px;border-radius:24px;border:3px solid transparent;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 6px 24px rgba(0,0,0,.08);transition:all .25s;font-family:'Nunito',sans-serif}
+        .mode-card:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(0,0,0,.13)}
+        .mode-card:active{transform:translateY(-1px)}
+        .mode-card i.icon{font-size:46px;margin-bottom:4px}
+        .mode-name{font-family:'Fredoka One',cursive;font-size:22px}
+        .mode-desc{font-size:14px;font-weight:600;opacity:.8}
+        .mode-solo{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-color:#A5D6A7;color:#2E7D32}
+        .mode-solo i.icon{color:#43A047}
+        .mode-race{background:linear-gradient(135deg,#FFF3E0,#FFE0B2);border-color:#FFCC80;color:#E65100}
+        .mode-race i.icon{color:#FB8C00}
+
+        /* ===== DASHBOARD GURU ===== */
+        .dashboard-btn{background:linear-gradient(135deg,#AB47BC,#8E24AA);color:#fff;border:none;padding:12px 28px;border-radius:16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s;box-shadow:0 4px 14px rgba(156,39,176,.2);margin-top:10px}
+        .dashboard-btn:hover{transform:translateY(-2px);box-shadow:0 7px 24px rgba(156,39,176,.35)}
+        .dashboard-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:10000;align-items:center;justify-content:center;padding:20px}
+        .dashboard-modal.active{display:flex}
+        .dashboard-content{background:var(--card);border-radius:28px;padding:40px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;animation:fbin .4s ease-out}
+        .dashboard-content .close-btn{position:absolute;top:16px;right:20px;background:none;border:none;font-size:28px;color:var(--muted);cursor:pointer;transition:transform .2s;padding:4px 8px}
+        .dashboard-content .close-btn:hover{transform:rotate(90deg)}
+        .dashboard-title{font-family:'Fredoka One',cursive;font-size:28px;color:#6A1B9A;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+        .dashboard-title i{font-size:26px}
+        .dashboard-sub{color:var(--muted);font-weight:600;margin-bottom:24px;font-size:14px}
+        .form-group{margin-bottom:20px}
+        .form-group label{display:block;font-weight:700;font-size:14px;color:var(--fg);margin-bottom:6px}
+        .form-group label i{margin-right:6px;color:#AB47BC}
+        .form-group input,.form-group select{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;transition:border-color .2s;background:var(--bg)}
+        .form-group input:focus,.form-group select:focus{outline:none;border-color:#AB47BC}
+        .form-group input[type="password"]{font-family:'Nunito',sans-serif}
+        .form-group .help-text{font-size:12px;color:var(--muted);margin-top:4px}
+        .btn-primary{background:linear-gradient(135deg,#AB47BC,#8E24AA);color:#fff;border:none;padding:14px 32px;border-radius:16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:all .2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 7px 24px rgba(156,39,176,.3)}
+        .btn-primary:disabled{opacity:.6;cursor:not-allowed}
+        .btn-back-dashboard{background:linear-gradient(135deg,#26A69A,#00897B);color:#fff;border:none;padding:14px 32px;border-radius:16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:all .2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px}
+        .btn-back-dashboard:hover{transform:translateY(-2px);box-shadow:0 7px 24px rgba(0,137,123,.35)}
+        .btn-secondary{background:var(--border);color:var(--fg);border:none;padding:12px 24px;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s}
+        .btn-secondary:hover{background:#d5c8b8}
+        .status-msg{padding:12px 16px;border-radius:12px;font-weight:600;font-size:14px;margin-top:12px;display:none}
+        .status-msg.success{display:block;background:#E8F5E9;color:#2E7D32;border:2px solid #A5D6A7}
+        .status-msg.error{display:block;background:#FFEBEE;color:#C62828;border:2px solid #EF9A9A}
+        .status-msg.info{display:block;background:#E3F2FD;color:#1565C0;border:2px solid #90CAF9}
+        .level-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-weight:700;font-size:12px;margin-left:8px}
+        .level-easy{background:#E8F5E9;color:#2E7D32;border:1.5px solid #A5D6A7}
+        .level-medium{background:#FFF3E0;color:#E65100;border:1.5px solid #FFCC80}
+        .level-hard{background:#FFEBEE;color:#C62828;border:1.5px solid #EF9A9A}
+        .tense-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-weight:700;font-size:11px;background:linear-gradient(135deg,#E3F2FD,#BBDEFB);color:#1565C0;border:1.5px solid #90CAF9}
+        .loading-spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin .8s ease-in-out infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* ===== HEADER ===== */
+        .header{background:linear-gradient(135deg,#FF9AA2 0%,#FFB7B2 45%,#FFDAC1 100%);border-radius:22px;padding:18px 24px;margin-bottom:18px;box-shadow:0 6px 24px rgba(255,154,162,.3);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;position:relative;overflow:hidden}
+        .header::before{content:'';position:absolute;top:-35px;right:-35px;width:120px;height:120px;background:rgba(255,255,255,.15);border-radius:50%}
+        .title{font-family:'Fredoka One',cursive;font-size:24px;color:#fff;text-shadow:2px 2px 6px rgba(180,80,80,.15);display:flex;align-items:center;gap:8px;position:relative;z-index:1}
+        .star-icon{font-size:18px;animation:sp 3s ease-in-out infinite}
+        @keyframes sp{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(12deg) scale(1.18)}}
+        .header-stats{display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:relative;z-index:1}
+        .stat-badge{background:rgba(255,255,255,.3);backdrop-filter:blur(4px);border-radius:13px;padding:7px 15px;font-weight:700;font-size:14px;color:#fff;display:flex;align-items:center;gap:7px}
+        .stat-badge i{font-size:14px}
+        .score-value{color:#FFF176;font-size:18px}
+        .menu-btn{background:rgba(255,255,255,.3);border:none;color:#fff;width:36px;height:36px;border-radius:11px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+        .menu-btn:hover{background:rgba(255,255,255,.5)}
+
+        /* ===== GAME ===== */
+        .type-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:10px;font-weight:700;font-size:13px;margin-bottom:6px}
+        .type-tag i{font-size:12px}
+        .type-tag.t-aff{background:#E8F5E9;color:#2E7D32;border:1.5px solid #A5D6A7}
+        .type-tag.t-neg{background:#FFF3E0;color:#E65100;border:1.5px solid #FFCC80}
+        .type-tag.t-int{background:#E3F2FD;color:#1565C0;border:1.5px solid #90CAF9}
+        .section-label{font-family:'Fredoka One',cursive;font-size:15px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+        .section-label i{font-size:13px}
+        .hint-text{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:5px;justify-content:center}
+
+        .word-bank{position:relative;height:210px;background:linear-gradient(180deg,#EAF5FD,#D6EDF9);border:3px dashed var(--bank-bd);border-radius:20px;overflow:hidden;margin-bottom:4px;box-shadow:inset 0 3px 12px rgba(0,0,0,.04)}
+        .bank-empty-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:700;color:var(--bank-bd);font-size:14px;pointer-events:none;display:none;align-items:center;gap:7px}
+        .bank-empty-msg.visible{display:flex}
+
+        .word-card{position:absolute;display:inline-flex;align-items:center;justify-content:center;padding:9px 20px;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;cursor:grab;user-select:none;-webkit-user-select:none;box-shadow:0 3px 10px rgba(0,0,0,.1);border:2.5px solid;white-space:nowrap;transition:transform .15s,box-shadow .15s,left 2s ease-in-out,top 2s ease-in-out;z-index:1;touch-action:none;will-change:left,top;max-width:90%;box-sizing:border-box}
+        .word-card.punct{font-size:22px;padding:9px 14px}
+        .word-card:hover{transform:scale(1.06);box-shadow:0 5px 18px rgba(0,0,0,.15)}
+        .word-card.dragging{cursor:grabbing;transform:scale(1.1)!important;box-shadow:0 10px 35px rgba(0,0,0,.25)!important;z-index:10000!important;transition:none!important}
+
+        /* ===== SENTENCE SLOTS ===== */
+        .sentence-area,.tp-sentence{min-height:80px;padding:14px 18px;gap:10px 12px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;margin-bottom:16px;width:100%;box-sizing:border-box;background:repeating-linear-gradient(transparent,transparent 35px,rgba(224,200,128,.18) 35px,rgba(224,200,128,.18) 36px),linear-gradient(180deg,#FFFAE6,#FFF3CC);border:3px dashed var(--sent-bd);border-radius:20px;box-shadow:inset 0 3px 12px rgba(0,0,0,.04);transition:border-color .25s,background .25s,box-shadow .25s;position:relative}
+        .tp-sentence{margin-bottom:10px;min-height:76px}
+        .word-slot{display:inline-flex;align-items:center;justify-content:center;min-width:65px;min-height:48px;padding:4px 6px;border:2.5px dashed var(--slot-border);border-radius:14px;background:var(--slot-bg);position:relative;transition:all .25s;flex-shrink:0}
+        .word-slot.highlight{border-color:var(--accent2);background:rgba(78,205,196,.1);box-shadow:0 0 20px rgba(78,205,196,.15)}
+        .word-slot .word-card.placed{margin:0!important;border-style:solid!important;width:100%;min-height:42px;justify-content:center}
+        .word-slot .word-card.placed .return-x{display:none!important}
+        .word-slot .word-card.placed:hover .return-x{display:flex!important}
+        .word-slot .slot-number{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;color:var(--muted);background:var(--bg);padding:0 6px;border-radius:4px;opacity:.6}
+        .sentence-area.drag-hover .word-slot,.tp-sentence.drag-hover .word-slot{border-color:var(--accent2);background:rgba(78,205,196,.15)}
+        .sentence-area.result-correct .word-slot,.tp-sentence.result-correct .word-slot{border-color:var(--success);background:rgba(107,203,119,.1)}
+        .sentence-area.result-wrong .word-slot,.tp-sentence.result-wrong .word-slot{border-color:var(--error);background:rgba(255,107,107,.08)}
+        .sentence-area.result-correct,.tp-sentence.result-correct{border-color:var(--success)!important;border-style:solid!important;box-shadow:0 0 25px rgba(107,203,119,.25),inset 0 3px 12px rgba(107,203,119,.08)!important}
+        .sentence-area.result-wrong,.tp-sentence.result-wrong{animation:ashake .5s ease;border-color:var(--error)!important}
+        @keyframes ashake{0%,100%{transform:translateX(0)}15%{transform:translateX(-7px)}30%{transform:translateX(7px)}50%{transform:translateX(-5px)}70%{transform:translateX(5px)}85%{transform:translateX(-2px)}}
+        .sentence-placeholder{color:var(--sent-bd);font-weight:600;font-size:14px;pointer-events:none;display:flex;align-items:center;gap:7px;opacity:.7}
+        .insert-bar{width:4px;height:40px;background:var(--accent2);border-radius:3px;animation:ibp .7s ease-in-out infinite;flex-shrink:0}
+        @keyframes ibp{0%,100%{opacity:.4;transform:scaleY(.75)}50%{opacity:1;transform:scaleY(1)}}
+
+        /* ===== 2 PLAYER ===== */
+        .players-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0 16px;align-items:start;margin-bottom:14px}
+        .player-panel{position:relative;border-radius:22px;border:3px solid var(--border);padding:14px 16px 18px;background:var(--card);box-shadow:0 4px 16px rgba(0,0,0,.06);transition:box-shadow .4s,border-color .4s;width:100%;min-width:0;box-sizing:border-box;overflow:hidden}
+        .player-panel.winner{border-color:#FFD700;box-shadow:0 0 35px rgba(255,215,0,.35),0 4px 16px rgba(0,0,0,.06)}
+        .player-panel.locked{opacity:.85}
+        .player-label{font-family:'Fredoka One',cursive;font-size:17px;padding:6px 16px;border-radius:12px;display:inline-flex;align-items:center;gap:7px;margin-bottom:8px;color:#fff}
+        .p1-label{background:linear-gradient(135deg,var(--p1),#FFB7B2)}
+        .p2-label{background:linear-gradient(135deg,var(--p2),#4DD0E1)}
+        .vs-divider{display:flex;align-items:center;justify-content:center;padding:0 10px;font-family:'Fredoka One',cursive;font-size:26px;color:var(--muted);min-width:50px}
+        .vs-divider span{background:var(--bg);border:3px solid var(--border);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+        .tp-bank{height:175px}
+        .player-check-wrap{text-align:center;margin-bottom:6px}
+        .player-feedback{text-align:center;min-height:40px}
+        .lock-overlay{display:none;position:absolute;inset:0;background:rgba(255,255,255,.65);border-radius:20px;z-index:50;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:16px;color:var(--muted);gap:8px;pointer-events:none;flex-direction:column}
+        .lock-overlay.show{display:flex;pointer-events:auto}
+        .lock-overlay i{font-size:28px;margin-bottom:4px}
+        .round-banner{text-align:center;padding:12px 20px;border-radius:14px;font-family:'Fredoka One',cursive;font-size:20px;display:none;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;animation:rbdrop .5s ease-out}
+        .round-banner.show{display:flex}
+        .round-banner.p1-win{background:linear-gradient(135deg,#FFE0E0,#FFB3BA);color:var(--p1dark);border:2px solid var(--p1)}
+        .round-banner.p2-win{background:linear-gradient(135deg,#D4F5F0,#B2EBF2);color:var(--p2dark);border:2px solid var(--p2)}
+        .round-banner i{font-size:22px}
+        @keyframes rbdrop{0%{transform:translateY(-20px);opacity:0}100%{transform:translateY(0);opacity:1}}
+
+        /* ===== CONTROLS ===== */
+        .controls,.tp-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+        .btn{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:11px 24px;border:none;border-radius:14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .2s;box-shadow:0 4px 14px rgba(0,0,0,.1);outline:none}
+        .btn:hover{transform:translateY(-2px);box-shadow:0 7px 20px rgba(0,0,0,.14)}
+        .btn:active{transform:translateY(0);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+        .btn:focus-visible{box-shadow:0 0 0 3px rgba(78,205,196,.5),0 4px 14px rgba(0,0,0,.1)}
+        .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:0 2px 8px rgba(0,0,0,.08)!important}
+        .btn-check{background:linear-gradient(135deg,#6BCB77,#4CAF50);color:#fff}
+        .btn-reset{background:linear-gradient(135deg,#FFB74D,#FFA726);color:#fff}
+        .btn-next{background:linear-gradient(135deg,#64B5F6,#42A5F5);color:#fff}
+        .btn-generate{background:linear-gradient(135deg,#AB47BC,#8E24AA);color:#fff}
+        .btn-again{background:linear-gradient(135deg,#FF9AA2,#FF6B6B);color:#fff;font-size:16px;padding:13px 32px}
+        .btn-menu{background:linear-gradient(135deg,#B0BEC5,#90A4AE);color:#fff;font-size:15px;padding:11px 24px}
+        .btn-small{font-size:13px;padding:8px 16px}
+        .btn-back-main{background:linear-gradient(135deg,#FF9AA2,#FF6B6B);color:#fff;font-size:13px;padding:8px 16px}
+
+        /* ===== FEEDBACK ===== */
+        .feedback-zone{text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+        .fb-msg{padding:12px 22px;border-radius:14px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:9px;animation:fbin .35s ease-out;box-shadow:0 4px 16px rgba(0,0,0,.07)}
+        @keyframes fbin{0%{transform:translateY(12px) scale(.94);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+        .fb-correct{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);color:#2E7D32;border:2px solid #A5D6A7}
+        .fb-wrong{background:linear-gradient(135deg,#FFEBEE,#FFCDD2);color:#C62828;border:2px solid #EF9A9A}
+        .fb-hint{font-size:13px;color:var(--muted);font-weight:600;animation:fbin .4s ease-out .1s both}
+        .fb-hint span{color:var(--fg);font-weight:800}
+
+        /* ===== END SCREEN ===== */
+        .end-screen{text-align:center;padding:50px 20px;animation:fbin .5s ease-out}
+        .end-title{font-family:'Fredoka One',cursive;font-size:36px;margin-bottom:8px}
+        .end-title.grad{background:linear-gradient(135deg,#FF6B6B,#FFB74D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .end-score{font-size:20px;font-weight:700;margin-bottom:8px;line-height:1.6}
+        .end-score .big{font-size:32px;color:var(--accent)}
+        .end-msg{font-size:15px;color:var(--muted);margin-bottom:28px;font-weight:600}
+        .end-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+        .champ-crown{font-size:60px;color:#FFD700;animation:sp 2s ease-in-out infinite;margin-bottom:10px;display:block}
+        .champ-scores{display:flex;align-items:center;justify-content:center;gap:18px;margin:24px 0}
+        .champ-card{width:140px;padding:22px 16px;border-radius:20px;background:var(--card);border:3px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.08);transition:all .4s}
+        .champ-card.winner-card{border-color:#FFD700;box-shadow:0 0 30px rgba(255,215,0,.3);transform:scale(1.08)}
+        .champ-label{font-weight:700;font-size:15px;margin-bottom:6px}
+        .champ-num{font-family:'Fredoka One',cursive;font-size:40px}
+        .champ-vs{font-family:'Fredoka One',cursive;font-size:22px;color:var(--muted)}
+        .champ-card.p1-card .champ-num{color:var(--p1dark)}
+        .champ-card.p2-card .champ-num{color:var(--p2dark)}
+
+        /* ===== FOOTER ===== */
+        .global-footer{text-align:center;padding:14px;font-size:12px;color:var(--muted);font-weight:600;position:relative;z-index:1;margin-top:auto}
+        .global-footer i{color:var(--accent)}
+        .global-footer span{font-weight:800;color:var(--fg)}
+
+        /* ===== RESPONSIVE ===== */
+        @media(max-width:900px){.players-grid{grid-template-columns:1fr;gap:14px}.vs-divider{padding:4px 0}.vs-divider span{width:40px;height:40px;font-size:13px}.player-panel{max-width:100%;margin:0 auto}.tp-bank{height:200px}}
+        @media(max-width:768px){.game-container{padding:12px}.header{padding:14px 18px;border-radius:18px}.title{font-size:20px}.stat-badge{padding:5px 11px;font-size:12px}.word-bank{height:190px}.word-card{padding:8px 16px;font-size:14px;border-radius:12px}.word-card.punct{font-size:18px;padding:8px 12px}.sentence-area,.tp-sentence{padding:12px 14px;min-height:66px;gap:8px 10px}.word-slot{min-width:55px;min-height:42px;padding:3px 5px}.word-slot .word-card.placed{font-size:14px;padding:4px 10px;min-height:36px}.btn{padding:9px 18px;font-size:13px;border-radius:12px}.mode-title{font-size:32px}.mode-card{width:240px;padding:28px 20px 24px}.mode-card i.icon{font-size:36px}.mode-name{font-size:19px}.dashboard-content{padding:28px 20px}}
+        @media(max-width:480px){.title{font-size:17px;gap:5px}.star-icon{font-size:14px}.word-bank{height:165px}.word-card{padding:6px 12px;font-size:13px;border-radius:10px;max-width:85%}.word-card.punct{font-size:16px;padding:6px 10px}.header-stats{gap:6px}.stat-badge{padding:4px 8px;font-size:11px;gap:4px}.score-value{font-size:15px}.controls,.tp-controls{gap:7px}.btn{padding:8px 14px;font-size:12px;gap:4px}.sentence-area,.tp-sentence{padding:10px 10px;min-height:56px;gap:6px 8px}.word-slot{min-width:45px;min-height:36px;padding:2px 4px;border-radius:10px}.word-slot .word-card.placed{font-size:12px;padding:3px 8px;min-height:30px;border-radius:8px}.word-slot .slot-number{font-size:8px;top:-8px}.mode-title{font-size:26px}.mode-cards{gap:14px}.mode-card{width:100%;max-width:280px}.dashboard-content{padding:20px 16px}.dashboard-title{font-size:22px}.tense-indicator{font-size:12px;padding:6px 14px}}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+    </style>
+</head>
+<body>
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+    <div class="confetti-layer" id="confettiLayer"></div>
+
+    <div class="game-container">
+        <!-- MODE SELECT -->
+        <div id="modeSelect" class="screen active">
+            <div class="mode-select">
+                <div class="mode-title">Arrange the Sentence</div>
+                <p class="mode-sub">AI-Powered Learning with Groq</p>
+                <div class="tense-indicator" id="tenseIndicator"><i class="fas fa-clock"></i> <span id="tenseIndicatorText">Simple Present Tense</span></div>
+                <div class="mode-cards">
+                    <button class="mode-card mode-solo" id="btnSolo">
+                        <i class="fas fa-user-graduate icon"></i>
+                        <span class="mode-name">Solo Player</span>
+                        <span class="mode-desc">Practice at your own pace</span>
+                    </button>
+                    <button class="mode-card mode-race" id="btnRace">
+                        <i class="fas fa-bolt icon"></i>
+                        <span class="mode-name">2 Player Race</span>
+                        <span class="mode-desc">Compete with a friend!</span>
+                    </button>
+                </div>
+                <button class="dashboard-btn" id="openDashboard"><i class="fas fa-chalkboard-teacher"></i> Dashboard Guru</button>
+            </div>
+        </div>
+
+        <!-- SINGLE PLAYER -->
+        <div id="singleGame" class="screen">
+            <header class="header">
+                <div class="title"><i class="fas fa-star star-icon"></i> Arrange the Sentence <i class="fas fa-star star-icon"></i></div>
+                <div class="header-stats">
+                    <button class="menu-btn" id="spMenu" title="Menu"><i class="fas fa-home"></i></button>
+                    <button class="menu-btn btn-back-main" id="spBackMain" title="Back to Main"><i class="fas fa-arrow-left"></i></button>
+                    <div class="stat-badge"><i class="fas fa-book-open"></i><span id="spQ">1/10</span></div>
+                    <div class="stat-badge"><i class="fas fa-trophy"></i>Score: <span class="score-value" id="spScore">0</span></div>
+                    <span class="level-badge level-easy" id="spLevel">Easy</span>
+                    <span class="tense-badge" id="spTenseBadge">Simple Present</span>
+                </div>
+            </header>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center;">
+                <div class="type-tag" id="spType"></div>
+                <button class="btn btn-generate btn-small" id="spGenerate"><i class="fas fa-magic"></i> Generate New</button>
+            </div>
+            <div class="section-label"><i class="fas fa-palette"></i> Word Bank</div>
+            <div class="word-bank" id="spBank"><div class="bank-empty-msg" id="spEmpty"><i class="fas fa-check-circle"></i> All words placed!</div></div>
+            <div class="hint-text"><i class="fas fa-hand-point-down"></i> Drag words into the slots below</div>
+            <div class="section-label"><i class="fas fa-pen-fancy"></i> Your Sentence</div>
+            <div class="sentence-area" id="spSentence"></div>
+            <div class="controls">
+                <button class="btn btn-check" id="spCheck"><i class="fas fa-check-circle"></i> Check</button>
+                <button class="btn btn-reset" id="spReset"><i class="fas fa-redo-alt"></i> Reset</button>
+                <button class="btn btn-next" id="spNext"><i class="fas fa-arrow-right"></i> Next</button>
+            </div>
+            <div class="feedback-zone" id="spFeedback"></div>
+        </div>
+
+        <!-- SINGLE END -->
+        <div id="singleEnd" class="screen">
+            <div class="end-screen">
+                <div class="end-title grad"><i class="fas fa-award"></i> Great Job!</div>
+                <div class="end-score" id="spEndScore"></div>
+                <div class="end-msg" id="spEndMsg"></div>
+                <div class="end-btns">
+                    <button class="btn btn-again" id="spAgain"><i class="fas fa-redo"></i> Play Again</button>
+                    <button class="btn btn-menu" id="spEndMenu"><i class="fas fa-home"></i> Main Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TWO PLAYER -->
+        <div id="twoPlayerGame" class="screen">
+            <header class="header tp-header">
+                <div class="title"><i class="fas fa-star star-icon"></i> Sentence Race <i class="fas fa-star star-icon"></i></div>
+                <div class="header-stats">
+                    <button class="menu-btn" id="tpMenu" title="Menu"><i class="fas fa-home"></i></button>
+                    <button class="menu-btn btn-back-main" id="tpBackMain" title="Back to Main"><i class="fas fa-arrow-left"></i></button>
+                    <div class="stat-badge"><i class="fas fa-book-open"></i><span id="tpRound">1/10</span></div>
+                    <div class="stat-badge p1-b"><i class="fas fa-trophy"></i>P1: <span class="score-value" id="tpP1S">0</span></div>
+                    <div class="stat-badge p2-b"><i class="fas fa-trophy"></i>P2: <span class="score-value" id="tpP2S">0</span></div>
+                    <span class="level-badge level-easy" id="tpLevel">Easy</span>
+                    <span class="tense-badge" id="tpTenseBadge">Simple Present</span>
+                </div>
+            </header>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center;justify-content:center;">
+                <button class="btn btn-generate btn-small" id="tpGenerate"><i class="fas fa-magic"></i> Generate New Question</button>
+            </div>
+            <div class="round-banner" id="roundBanner"></div>
+            <div class="players-grid">
+                <div class="player-panel" id="p1Panel">
+                    <div class="player-label p1-label"><i class="fas fa-user"></i> Player 1</div>
+                    <div class="type-tag" id="p1Type"></div>
+                    <div class="section-label"><i class="fas fa-palette"></i> Word Bank</div>
+                    <div class="word-bank tp-bank" id="p1Bank"><div class="bank-empty-msg" id="p1Empty"><i class="fas fa-check-circle"></i> All placed!</div></div>
+                    <div class="hint-text"><i class="fas fa-hand-point-down"></i> Drag words into the slots below</div>
+                    <div class="section-label"><i class="fas fa-pen-fancy"></i> Your Sentence</div>
+                    <div class="tp-sentence" id="p1Sentence"></div>
+                    <div class="player-check-wrap"><button class="btn btn-check" id="p1Check"><i class="fas fa-check-circle"></i> Check</button></div>
+                    <div class="player-feedback" id="p1Feedback"></div>
+                    <div class="lock-overlay" id="p1Overlay"><i class="fas fa-hourglass-half"></i><span></span></div>
+                </div>
+                <div class="vs-divider"><span>VS</span></div>
+                <div class="player-panel" id="p2Panel">
+                    <div class="player-label p2-label"><i class="fas fa-user"></i> Player 2</div>
+                    <div class="type-tag" id="p2Type"></div>
+                    <div class="section-label"><i class="fas fa-palette"></i> Word Bank</div>
+                    <div class="word-bank tp-bank" id="p2Bank"><div class="bank-empty-msg" id="p2Empty"><i class="fas fa-check-circle"></i> All placed!</div></div>
+                    <div class="hint-text"><i class="fas fa-hand-point-down"></i> Drag words into the slots below</div>
+                    <div class="section-label"><i class="fas fa-pen-fancy"></i> Your Sentence</div>
+                    <div class="tp-sentence" id="p2Sentence"></div>
+                    <div class="player-check-wrap"><button class="btn btn-check" id="p2Check"><i class="fas fa-check-circle"></i> Check</button></div>
+                    <div class="player-feedback" id="p2Feedback"></div>
+                    <div class="lock-overlay" id="p2Overlay"><i class="fas fa-hourglass-half"></i><span></span></div>
+                </div>
+            </div>
+            <div class="tp-controls">
+                <button class="btn btn-reset" id="tpReset"><i class="fas fa-redo-alt"></i> Reset Round</button>
+                <button class="btn btn-next" id="tpNext" style="display:none"><i class="fas fa-arrow-right"></i> Next Round</button>
+            </div>
+        </div>
+
+        <!-- CHAMPION SCREEN -->
+        <div id="championScreen" class="screen">
+            <div class="end-screen">
+                <span class="champ-crown"><i class="fas fa-crown"></i></span>
+                <div class="end-title" id="champTitle"></div>
+                <div class="champ-scores">
+                    <div class="champ-card p1-card" id="champP1C">
+                        <div class="champ-label">Player 1</div>
+                        <div class="champ-num" id="champP1N">0</div>
+                    </div>
+                    <div class="champ-vs">VS</div>
+                    <div class="champ-card p2-card" id="champP2C">
+                        <div class="champ-label">Player 2</div>
+                        <div class="champ-num" id="champP2N">0</div>
+                    </div>
+                </div>
+                <div class="end-msg" id="champMsg"></div>
+                <div class="end-btns">
+                    <button class="btn btn-again" id="champAgain"><i class="fas fa-redo"></i> Play Again</button>
+                    <button class="btn btn-menu" id="champMenu"><i class="fas fa-home"></i> Main Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD MODAL -->
+    <div class="dashboard-modal" id="dashboardModal">
+        <div class="dashboard-content">
+            <button class="close-btn" id="closeDashboard"><i class="fas fa-times"></i></button>
+            <div class="dashboard-title"><i class="fas fa-chalkboard-teacher"></i> Dashboard Guru</div>
+            <div class="dashboard-sub">Kelola pengaturan game dan pilih tenses</div>
+
+            <div id="loginSection">
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="adminPassword" placeholder="Masukkan password guru">
+                    <div class="help-text">Password default: <strong>guru123</strong></div>
+                </div>
+                <button class="btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <div class="status-msg" id="loginStatus"></div>
+            </div>
+
+            <div id="dashboardSection" style="display:none;">
+                <div class="form-group">
+                    <label><i class="fas fa-key"></i> Groq API Key</label>
+                    <input type="password" id="apiKeyInput" placeholder="Masukkan Groq API Key">
+                    <div class="help-text">Dapatkan API key dari <a href="https://console.groq.com" target="_blank">console.groq.com</a></div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-clock"></i> Pilih Tenses</label>
+                    <select id="tenseSelect">
+                        <option value="simple_present">Simple Present Tense</option>
+                        <option value="simple_past">Simple Past Tense</option>
+                        <option value="present_continuous">Present Continuous Tense</option>
+                        <option value="past_continuous">Past Continuous Tense</option>
+                        <option value="simple_future">Simple Future Tense</option>
+                        <option value="future_continuous">Future Continuous Tense</option>
+                    </select>
+                    <div class="help-text">Pilih jenis tenses untuk soal yang akan dimainkan</div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-layer-group"></i> Level Kesulitan</label>
+                    <select id="levelSelect">
+                        <option value="easy">Easy - Kalimat pendek (3-4 kata)</option>
+                        <option value="medium" selected>Medium - Kalimat sedang (5-6 kata)</option>
+                        <option value="hard">Hard - Kalimat panjang (7-8 kata)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-list"></i> Tipe Kalimat</label>
+                    <select id="typeSelect">
+                        <option value="all">Semua Tipe</option>
+                        <option value="affirmative">Affirmative (+)</option>
+                        <option value="negative">Negative (-)</option>
+                        <option value="interrogative">Interrogative (?)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-hashtag"></i> Jumlah Soal</label>
+                    <input type="number" id="questionCount" value="10" min="5" max="30">
+                    <div class="help-text">Minimal 5, maksimal 30 soal</div>
+                </div>
+
+                <button class="btn-primary" id="saveSettingsBtn"><i class="fas fa-save"></i> Simpan Pengaturan</button>
+                <div class="status-msg" id="saveStatus"></div>
+
+                <button class="btn-primary" id="generateBtn" style="margin-top:10px"><i class="fas fa-magic"></i> Generate Soal dengan AI</button>
+                <div class="status-msg" id="generateStatus"></div>
+
+                <button class="btn-back-dashboard" id="backToDashboardBtn"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard Utama</button>
+
+                <hr style="margin:20px 0;border-color:var(--border)">
+
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button class="btn-secondary" id="resetDefaultBtn"><i class="fas fa-undo"></i> Reset ke Default</button>
+                    <button class="btn-secondary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="global-footer">
+        <i class="fas fa-heart"></i> Developed by <span>Darmawati, S.Pd., M.Pd.</span> &mdash; SMPN 1 ANGGERAJA
+    </footer>
+
+    <script>
+    (function(){
+        'use strict';
+
+        /* ===== TENSE LABELS ===== */
+        var TENSE_LABELS = {
+            simple_present: 'Simple Present Tense',
+            simple_past: 'Simple Past Tense',
+            present_continuous: 'Present Continuous Tense',
+            past_continuous: 'Past Continuous Tense',
+            simple_future: 'Simple Future Tense',
+            future_continuous: 'Future Continuous Tense'
+        };
+
+        var TENSE_SHORT = {
+            simple_present: 'Simple Present',
+            simple_past: 'Simple Past',
+            present_continuous: 'Pres. Continuous',
+            past_continuous: 'Past Continuous',
+            simple_future: 'Simple Future',
+            future_continuous: 'Fut. Continuous'
+        };
+
+        /* ===== DEFAULT SENTENCES PER TENSE ===== */
+        var ALL_SENTENCES = {
+            simple_present: [
+                {text:"The cat sleeps on the mat",type:"affirmative"},
+                {text:"They play in the park",type:"affirmative"},
+                {text:"He drinks water every morning",type:"affirmative"},
+                {text:"We eat lunch at noon",type:"affirmative"},
+                {text:"The sun rises in the east",type:"affirmative"},
+                {text:"Birds fly in the sky",type:"affirmative"},
+                {text:"I walk to school daily",type:"affirmative"},
+                {text:"Dogs bark at strangers",type:"affirmative"},
+                {text:"She sings a nice song",type:"affirmative"},
+                {text:"The flower blooms in spring",type:"affirmative"},
+                {text:"She does not like spicy food",type:"negative"},
+                {text:"They do not go to school on Sunday",type:"negative"},
+                {text:"He does not eat meat at all",type:"negative"},
+                {text:"We do not watch TV in the morning",type:"negative"},
+                {text:"I do not drink coffee every day",type:"negative"},
+                {text:"The cat does not sleep at noon",type:"negative"},
+                {text:"My mother does not work on Saturday",type:"negative"},
+                {text:"They do not play football in the rain",type:"negative"},
+                {text:"You do not need an umbrella now",type:"negative"},
+                {text:"He does not speak English very well",type:"negative"},
+                {text:"Do you like ice cream ?",type:"interrogative"},
+                {text:"Does she read books every day ?",type:"interrogative"},
+                {text:"Do they go to school by bus ?",type:"interrogative"},
+                {text:"Does he play guitar every evening ?",type:"interrogative"},
+                {text:"Do we have English class today ?",type:"interrogative"},
+                {text:"Does the cat drink milk ?",type:"interrogative"},
+                {text:"Do birds sing in the morning ?",type:"interrogative"},
+                {text:"Does your father work in a hospital ?",type:"interrogative"},
+                {text:"Do you study math on Monday ?",type:"interrogative"},
+                {text:"Does she cook dinner every night ?",type:"interrogative"}
+            ],
+            simple_past: [
+                {text:"She visited her grandmother last week",type:"affirmative"},
+                {text:"They played football yesterday",type:"affirmative"},
+                {text:"He walked to school this morning",type:"affirmative"},
+                {text:"We watched a movie last night",type:"affirmative"},
+                {text:"The rain stopped an hour ago",type:"affirmative"},
+                {text:"I cooked dinner for my family",type:"affirmative"},
+                {text:"She bought a new dress yesterday",type:"affirmative"},
+                {text:"He finished his homework on time",type:"affirmative"},
+                {text:"They traveled to Bali last month",type:"affirmative"},
+                {text:"The teacher explained the lesson clearly",type:"affirmative"},
+                {text:"She did not go to school yesterday",type:"negative"},
+                {text:"They did not play in the garden",type:"negative"},
+                {text:"He did not eat breakfast this morning",type:"negative"},
+                {text:"We did not watch TV last night",type:"negative"},
+                {text:"I did not finish my homework",type:"negative"},
+                {text:"She did not buy the red dress",type:"negative"},
+                {text:"They did not come to the party",type:"negative"},
+                {text:"He did not call me last night",type:"negative"},
+                {text:"We did not see the rainbow",type:"negative"},
+                {text:"The dog did not bark at the stranger",type:"negative"},
+                {text:"Did you go to school yesterday ?",type:"interrogative"},
+                {text:"Did she visit her grandmother ?",type:"interrogative"},
+                {text:"Did they play football last week ?",type:"interrogative"},
+                {text:"Did he finish his homework ?",type:"interrogative"},
+                {text:"Did you watch the movie ?",type:"interrogative"},
+                {text:"Did she buy a new bag ?",type:"interrogative"},
+                {text:"Did they travel to Jakarta ?",type:"interrogative"},
+                {text:"Did he call you last night ?",type:"interrogative"},
+                {text:"Did we win the competition ?",type:"interrogative"},
+                {text:"Did the rain stop already ?",type:"interrogative"}
+            ],
+            present_continuous: [
+                {text:"She is reading a book now",type:"affirmative"},
+                {text:"They are playing in the garden",type:"affirmative"},
+                {text:"He is eating lunch right now",type:"affirmative"},
+                {text:"We are studying English at the moment",type:"affirmative"},
+                {text:"The baby is crying loudly",type:"affirmative"},
+                {text:"I am writing a letter now",type:"affirmative"},
+                {text:"She is cooking dinner in the kitchen",type:"affirmative"},
+                {text:"They are watching TV right now",type:"affirmative"},
+                {text:"He is running in the park",type:"affirmative"},
+                {text:"The children are singing a song",type:"affirmative"},
+                {text:"She is not reading a book now",type:"negative"},
+                {text:"They are not playing outside",type:"negative"},
+                {text:"He is not eating breakfast",type:"negative"},
+                {text:"We are not studying math today",type:"negative"},
+                {text:"I am not writing a poem",type:"negative"},
+                {text:"She is not cooking right now",type:"negative"},
+                {text:"They are not watching the movie",type:"negative"},
+                {text:"He is not sleeping at the moment",type:"negative"},
+                {text:"The dog is not barking now",type:"negative"},
+                {text:"We are not going to the beach",type:"negative"},
+                {text:"Is she reading a book now ?",type:"interrogative"},
+                {text:"Are they playing in the garden ?",type:"interrogative"},
+                {text:"Is he eating lunch right now ?",type:"interrogative"},
+                {text:"Are you studying English ?",type:"interrogative"},
+                {text:"Is the baby crying loudly ?",type:"interrogative"},
+                {text:"Are we having a good time ?",type:"interrogative"},
+                {text:"Is she cooking dinner now ?",type:"interrogative"},
+                {text:"Are they watching TV ?",type:"interrogative"},
+                {text:"Is he running in the park ?",type:"interrogative"},
+                {text:"Are the children singing ?",type:"interrogative"}
+            ],
+            past_continuous: [
+                {text:"She was reading a book at that time",type:"affirmative"},
+                {text:"They were playing when it rained",type:"affirmative"},
+                {text:"He was sleeping at nine last night",type:"affirmative"},
+                {text:"We were studying when the bell rang",type:"affirmative"},
+                {text:"The baby was crying all night",type:"affirmative"},
+                {text:"I was writing a letter at that moment",type:"affirmative"},
+                {text:"She was cooking when I arrived",type:"affirmative"},
+                {text:"They were watching TV at eight",type:"affirmative"},
+                {text:"He was running in the park yesterday",type:"affirmative"},
+                {text:"The children were singing a song",type:"affirmative"},
+                {text:"She was not reading at that time",type:"negative"},
+                {text:"They were not playing when it rained",type:"negative"},
+                {text:"He was not sleeping last night",type:"negative"},
+                {text:"We were not studying then",type:"negative"},
+                {text:"I was not writing a poem",type:"negative"},
+                {text:"She was not cooking when I called",type:"negative"},
+                {text:"They were not watching TV at eight",type:"negative"},
+                {text:"He was not running in the park",type:"negative"},
+                {text:"The dog was not barking last night",type:"negative"},
+                {text:"We were not going to the beach",type:"negative"},
+                {text:"Was she reading a book at that time ?",type:"interrogative"},
+                {text:"Were they playing when it rained ?",type:"interrogative"},
+                {text:"Was he sleeping at nine last night ?",type:"interrogative"},
+                {text:"Were you studying when the bell rang ?",type:"interrogative"},
+                {text:"Was the baby crying all night ?",type:"interrogative"},
+                {text:"Were we having a good time then ?",type:"interrogative"},
+                {text:"Was she cooking when you arrived ?",type:"interrogative"},
+                {text:"Were they watching TV at eight ?",type:"interrogative"},
+                {text:"Was he running in the park ?",type:"interrogative"}
+            ],
+            simple_future: [
+                {text:"She will visit her grandmother tomorrow",type:"affirmative"},
+                {text:"They will play football next week",type:"affirmative"},
+                {text:"He will go to school tomorrow",type:"affirmative"},
+                {text:"We will watch a movie tonight",type:"affirmative"},
+                {text:"The rain will stop soon",type:"affirmative"},
+                {text:"I will cook dinner for my family",type:"affirmative"},
+                {text:"She will buy a new dress next month",type:"affirmative"},
+                {text:"He will finish his homework later",type:"affirmative"},
+                {text:"They will travel to Bali next year",type:"affirmative"},
+                {text:"The teacher will explain the lesson",type:"affirmative"},
+                {text:"She will not go to school tomorrow",type:"negative"},
+                {text:"They will not play in the garden",type:"negative"},
+                {text:"He will not eat breakfast tomorrow",type:"negative"},
+                {text:"We will not watch TV tonight",type:"negative"},
+                {text:"I will not finish my homework",type:"negative"},
+                {text:"She will not buy the red dress",type:"negative"},
+                {text:"They will not come to the party",type:"negative"},
+                {text:"He will not call me tonight",type:"negative"},
+                {text:"We will not see the rainbow",type:"negative"},
+                {text:"The dog will not bark at night",type:"negative"},
+                {text:"Will you go to school tomorrow ?",type:"interrogative"},
+                {text:"Will she visit her grandmother ?",type:"interrogative"},
+                {text:"Will they play football next week ?",type:"interrogative"},
+                {text:"Will he finish his homework ?",type:"interrogative"},
+                {text:"Will you watch the movie tonight ?",type:"interrogative"},
+                {text:"Will she buy a new bag ?",type:"interrogative"},
+                {text:"Will they travel to Jakarta ?",type:"interrogative"},
+                {text:"Will he call you tonight ?",type:"interrogative"},
+                {text:"Will we win the competition ?",type:"interrogative"},
+                {text:"Will the rain stop soon ?",type:"interrogative"}
+            ],
+            future_continuous: [
+                {text:"She will be reading a book at eight",type:"affirmative"},
+                {text:"They will be playing at that time",type:"affirmative"},
+                {text:"He will be eating lunch at noon",type:"affirmative"},
+                {text:"We will be studying English tomorrow",type:"affirmative"},
+                {text:"The baby will be sleeping all night",type:"affirmative"},
+                {text:"I will be writing a letter tonight",type:"affirmative"},
+                {text:"She will be cooking dinner at seven",type:"affirmative"},
+                {text:"They will be watching TV at nine",type:"affirmative"},
+                {text:"He will be running in the morning",type:"affirmative"},
+                {text:"The children will be singing a song",type:"affirmative"},
+                {text:"She will not be reading at eight",type:"negative"},
+                {text:"They will not be playing at that time",type:"negative"},
+                {text:"He will not be eating lunch at noon",type:"negative"},
+                {text:"We will not be studying tomorrow",type:"negative"},
+                {text:"I will not be writing a letter tonight",type:"negative"},
+                {text:"She will not be cooking at seven",type:"negative"},
+                {text:"They will not be watching TV",type:"negative"},
+                {text:"He will not be sleeping all night",type:"negative"},
+                {text:"The dog will not be barking then",type:"negative"},
+                {text:"We will not be going to the beach",type:"negative"},
+                {text:"Will she be reading a book at eight ?",type:"interrogative"},
+                {text:"Will they be playing at that time ?",type:"interrogative"},
+                {text:"Will he be eating lunch at noon ?",type:"interrogative"},
+                {text:"Will you be studying tomorrow ?",type:"interrogative"},
+                {text:"Will the baby be sleeping all night ?",type:"interrogative"},
+                {text:"Will we be having a good time ?",type:"interrogative"},
+                {text:"Will she be cooking at seven ?",type:"interrogative"},
+                {text:"Will they be watching TV ?",type:"interrogative"},
+                {text:"Will he be running in the morning ?",type:"interrogative"}
+            ]
+        };
+
+        /* ===== STATE ===== */
+        var currentTense = localStorage.getItem('selected_tense') || 'simple_present';
+        var currentLevel = localStorage.getItem('selected_level') || 'medium';
+        var currentType = localStorage.getItem('selected_type') || 'all';
+        var questionCountSetting = parseInt(localStorage.getItem('selected_count')) || 10;
+        var GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
+
+        function getSentences(){
+            return JSON.parse(JSON.stringify(ALL_SENTENCES[currentTense] || ALL_SENTENCES.simple_present));
+        }
+        var SENTENCES = getSentences();
+        var TOTAL = SENTENCES.length;
+
+        function updateTenseIndicator(){
+            var el = document.getElementById('tenseIndicatorText');
+            if(el) el.textContent = TENSE_LABELS[currentTense] || TENSE_LABELS.simple_present;
+        }
+        updateTenseIndicator();
+
+        /* ===== GROQ API ===== */
+        var TENSE_PROMPT_MAP = {
+            simple_present: 'Simple Present Tense. Untuk negative gunakan "do not" atau "does not". Untuk interrogative gunakan "Do" atau "Does" di awal kalimat.',
+            simple_past: 'Simple Past Tense. Gunakan verb bentuk kedua (V2). Untuk negative gunakan "did not" + V1. Untuk interrogative gunakan "Did" di awal kalimat.',
+            present_continuous: 'Present Continuous Tense. Gunakan "am/is/are + V-ing". Untuk negative gunakan "am/is/are + not + V-ing". Untuk interrogative gunakan "Am/Is/Are" di awal kalimat.',
+            past_continuous: 'Past Continuous Tense. Gunakan "was/were + V-ing". Untuk negative gunakan "was/were + not + V-ing". Untuk interrogative gunakan "Was/Were" di awal kalimat.',
+            simple_future: 'Simple Future Tense. Gunakan "will + V1". Untuk negative gunakan "will not + V1". Untuk interrogative gunakan "Will" di awal kalimat.',
+            future_continuous: 'Future Continuous Tense. Gunakan "will be + V-ing". Untuk negative gunakan "will not be + V-ing". Untuk interrogative gunakan "Will" di awal kalimat.'
+        };
+
+        async function generateQuestionsWithGroq(level, type, count, tense){
+            if(!GROQ_API_KEY) throw new Error('API Key tidak ditemukan. Silakan masukkan Groq API Key di Dashboard Guru.');
+            
+            // Validate API key format (basic check)
+            if(GROQ_API_KEY.length < 10) throw new Error('API Key tidak valid. Pastikan Anda memasukkan API Key yang benar dari console.groq.com');
+            
+            var typeFilter = type === 'all' ? 'semua tipe (affirmative, negative, interrogative)' : type;
+            var levelDesc = {easy:'kalimat pendek dengan 3-4 kata',medium:'kalimat sedang dengan 5-6 kata',hard:'kalimat panjang dengan 7-8 kata'}[level] || 'kalimat sedang dengan 5-6 kata';
+            var tenseRule = TENSE_PROMPT_MAP[tense] || TENSE_PROMPT_MAP.simple_present;
+
+            var prompt = 'Buatlah ' + count + ' soal latihan menyusun kalimat dalam bahasa Inggris untuk ' + (TENSE_LABELS[tense]||'Simple Present Tense') + '.\n' +
+                'Level: ' + levelDesc + '\n' +
+                'Tipe kalimat: ' + typeFilter + '\n\n' +
+                'Aturan: ' + tenseRule + '\n\n' +
+                'Format output harus berupa JSON array dengan objek:\n' +
+                '{"text": "kalimat lengkap dalam bahasa Inggris", "type": "affirmative" atau "negative" atau "interrogative"}\n\n' +
+                'Pastikan:\n' +
+                '1. Kalimat menggunakan ' + (TENSE_LABELS[tense]||'Simple Present Tense') + ' dengan benar\n' +
+                '2. Variasi subjek (I, You, We, They, He, She, It, nama orang, benda)\n' +
+                '3. Hanya output JSON array, tidak ada teks lain\n\n' +
+                'Contoh output: [{"text":"She reads a book every day","type":"affirmative"},{"text":"They do not eat meat","type":"negative"}]';
+
+            try {
+                var response = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Authorization':'Bearer ' + GROQ_API_KEY
+                    },
+                    body:JSON.stringify({
+                        model:'llama-3.3-70b-versatile',
+                        messages:[
+                            {role:'system',content:'You are an English teacher creating sentence arrangement exercises. Output only valid JSON.'},
+                            {role:'user',content:prompt}
+                        ],
+                        temperature:0.7,
+                        max_tokens:2000
+                    })
+                });
+                
+                if(!response.ok){
+                    var errData = await response.json().catch(function(){ return {}; });
+                    var errorMsg = errData.error?.message || response.statusText || 'Unknown error';
+                    throw new Error('API Error: ' + errorMsg + ' (Status: ' + response.status + ')');
+                }
+                
+                var data = await response.json();
+                if(!data.choices || !data.choices[0] || !data.choices[0].message) {
+                    throw new Error('Respons dari API tidak valid. Silakan coba lagi.');
+                }
+                
+                var content = data.choices[0].message.content;
+                var jsonMatch = content.match(/\[[\s\S]*\]/);
+                if(!jsonMatch) throw new Error('Respons dari AI tidak valid. Silakan coba lagi.');
+                
+                var questions = JSON.parse(jsonMatch[0]);
+                if(!Array.isArray(questions) || questions.length === 0) throw new Error('Tidak ada soal yang dihasilkan.');
+                
+                return questions.filter(function(q){ return q.text && q.type; }).slice(0, count);
+            } catch(err) {
+                // Re-throw with more specific message
+                if(err.message.includes('API Key')) throw err;
+                if(err.message.includes('fetch')) throw new Error('Koneksi internet bermasalah. Periksa koneksi Anda.');
+                throw err;
+            }
+        }
+
+        /* ===== AUDIO ===== */
+        var audioCtx=null;
+        function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;}
+        function playClap(){
+            var ctx=getAudio(),now=ctx.currentTime;
+            var ct=[0,0.06,0.12,0.2,0.28];
+            for(var i=0;i<ct.length;i++){(function(t){
+                var dur=0.04+Math.random()*0.03,bufLen=Math.floor(ctx.sampleRate*dur),buf=ctx.createBuffer(1,bufLen,ctx.sampleRate),d=buf.getChannelData(0);
+                for(var s=0;s<bufLen;s++)d[s]=(Math.random()*2-1)*Math.pow(1-s/bufLen,3);
+                var src=ctx.createBufferSource();src.buffer=buf;
+                var bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1500+Math.random()*2000;bp.Q.value=1.5;
+                var g=ctx.createGain();g.gain.value=0.5+Math.random()*0.3;
+                src.connect(bp);bp.connect(g);g.connect(ctx.destination);src.start(now+t);
+            })(ct[i]);}
+        }
+        function playHuhh(){
+            var ctx=getAudio(),now=ctx.currentTime,dur=0.4,nLen=Math.floor(ctx.sampleRate*dur),nBuf=ctx.createBuffer(1,nLen,ctx.sampleRate),nD=nBuf.getChannelData(0);
+            for(var i=0;i<nLen;i++)nD[i]=(Math.random()*2-1)*0.3;
+            var nS=ctx.createBufferSource();nS.buffer=nBuf;
+            var nF=ctx.createBiquadFilter();nF.type='bandpass';nF.frequency.value=600;nF.Q.value=2;
+            var nG=ctx.createGain();nG.gain.setValueAtTime(0.4,now);nG.gain.exponentialRampToValueAtTime(0.01,now+dur);
+            nS.connect(nF);nF.connect(nG);nG.connect(ctx.destination);nS.start(now);nS.stop(now+dur);
+            var osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.setValueAtTime(320,now);osc.frequency.exponentialRampToValueAtTime(120,now+dur);
+            var oG=ctx.createGain();oG.gain.setValueAtTime(0.15,now);oG.gain.exponentialRampToValueAtTime(0.01,now+dur);
+            var oF=ctx.createBiquadFilter();oF.type='lowpass';oF.frequency.value=800;
+            osc.connect(oF);oF.connect(oG);oG.connect(ctx.destination);osc.start(now);osc.stop(now+dur);
+        }
+
+        /* ===== UTILITY ===== */
+        var PALETTE=[
+            {bg:'#FFB3BA',bd:'#FF9AA2',tx:'#7A2E2E'},{bg:'#BAFFC9',bd:'#81C784',tx:'#1B5E20'},
+            {bg:'#BAE1FF',bd:'#64B5F6',tx:'#0D47A1'},{bg:'#FFFFBA',bd:'#FFD54F',tx:'#5D4037'},
+            {bg:'#E8BAFF',bd:'#CE93D8',tx:'#4A148C'},{bg:'#FFD4BA',bd:'#FFAB91',tx:'#BF360C'},
+            {bg:'#BAFFEA',bd:'#80CBC4',tx:'#004D40'},{bg:'#C9BAFF',bd:'#B39DDB',tx:'#311B92'},
+            {bg:'#FFBABA',bd:'#EF9A9A',tx:'#B71C1C'},{bg:'#BAFFD4',bd:'#A5D6A7',tx:'#1B5E20'}
+        ];
+        var punctSet=new Set(['.',',','!','?',';',':']);
+        function tokenize(text){
+            var tokens=[],i=0;
+            while(i<text.length){
+                if(text[i]===' '){i++;continue;}
+                if(punctSet.has(text[i])){tokens.push(text[i]);i++;continue;}
+                var j=i;
+                while(j<text.length&&text[j]!==' '&&!punctSet.has(text[j]))j++;
+                tokens.push(text.substring(i,j));i=j;
+            }
+            return tokens;
+        }
+        function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+        function getWords(text){return tokenize(text).filter(function(w){return w.trim().length>0;});}
+        function normalize(t){return t.toLowerCase().replace(/\s+/g,' ').trim().replace(/\s*([.!?;,])\s*/g,'$1 ');}
+        function showScreen(id){
+            document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+            document.getElementById(id).classList.add('active');
+        }
+
+        function confetti(){
+            var layer=document.getElementById('confettiLayer');
+            var colors=['#FF6B6B','#4ECDC4','#FFE66D','#A8E6CF','#FF8B94','#6BCB77','#FFD93D','#C9B1FF'];
+            for(var i=0;i<50;i++){
+                var bit=document.createElement('div');bit.className='confetti-bit';
+                bit.style.left=Math.random()*100+'%';
+                bit.style.top='-10px';
+                bit.style.width=(6+Math.random()*8)+'px';
+                bit.style.height=(6+Math.random()*8)+'px';
+                bit.style.background=colors[Math.floor(Math.random()*colors.length)];
+                bit.style.borderRadius=Math.random()>0.5?'50%':'2px';
+                bit.style.setProperty('--dur',(1.2+Math.random()*1.2)+'s');
+                bit.style.setProperty('--delay',(Math.random()*0.5)+'s');
+                bit.style.setProperty('--dx',(Math.random()*100-50)+'px');
+                bit.style.setProperty('--spin',(360+Math.random()*720)+'deg');
+                layer.appendChild(bit);
+                (function(el){setTimeout(function(){el.remove();},3000);})(bit);
+            }
+        }
+
+        function setTypeTag(el,type){
+            if(type==='affirmative'){el.className='type-tag t-aff';el.innerHTML='<i class="fas fa-check-circle"></i> Affirmative (+)';}
+            else if(type==='negative'){el.className='type-tag t-neg';el.innerHTML='<i class="fas fa-times-circle"></i> Negative (-)';}
+            else{el.className='type-tag t-int';el.innerHTML='<i class="fas fa-question-circle"></i> Interrogative (?)';}
+        }
+
+        function setLevelBadge(el,level){
+            el.className='level-badge';
+            if(level==='easy'){el.classList.add('level-easy');el.textContent='Easy';}
+            else if(level==='hard'){el.classList.add('level-hard');el.textContent='Hard';}
+            else{el.classList.add('level-medium');el.textContent='Medium';}
+        }
+
+        function setTenseBadge(el,tense){
+            el.textContent=TENSE_SHORT[tense]||'Simple Present';
+        }
+
+        /* ===== DRAG AND DROP ENGINE ===== */
+        function initDragDrop(bankEl,sentenceEl,emptyEl,onAllPlaced){
+            var cards=[],slots=[],dragCard=null,startX=0,startY=0,startLeft=0,startTop=0,origSlot=null;
+            var shuffleTimer = null;
+
+            function refreshSlots(){
+                slots=[];
+                sentenceEl.querySelectorAll('.word-slot').forEach(function(s){slots.push(s);});
+            }
+
+            function refreshCards(){
+                cards=[];
+                bankEl.querySelectorAll('.word-card').forEach(function(c){cards.push(c);});
+                sentenceEl.querySelectorAll('.word-card.placed').forEach(function(c){cards.push(c);});
+            }
+
+            function checkEmpty(){
+                var bankCards=bankEl.querySelectorAll('.word-card');
+                if(emptyEl){if(bankCards.length===0)emptyEl.classList.add('visible');else emptyEl.classList.remove('visible');}
+                if(onAllPlaced&&bankCards.length===0)onAllPlaced();
+            }
+
+            function posInBank(card,px,py){
+                var r=bankEl.getBoundingClientRect();
+                var cx=Math.max(4,Math.min(px-r.left, r.width-card.offsetWidth-4));
+                var cy=Math.max(4,Math.min(py-r.top, r.height-card.offsetHeight-4));
+                card.style.left=cx+'px';card.style.top=cy+'px';
+            }
+
+            function nearestSlot(px,py){
+                refreshSlots();
+                var best=null,bestDist=Infinity;
+                for(var i=0;i<slots.length;i++){
+                    var s=slots[i];
+                    if(s.querySelector('.word-card.placed'))continue;
+                    var sr=s.getBoundingClientRect();
+                    var scx=sr.left+sr.width/2,scy=sr.top+sr.height/2;
+                    var d=Math.hypot(px-scx,py-scy);
+                    if(d<bestDist&&d<120){bestDist=d;best=s;}
+                }
+                return best;
+            }
+
+            function placeInSlot(card,slot){
+                card.classList.add('placed');
+                card.classList.remove('dragging');
+                card.style.position='static';
+                card.style.left='';card.style.top='';
+                // Hapus animasi saat ditempatkan di slot
+                card.style.transition = 'transform .15s,box-shadow .15s';
+                slot.appendChild(card);
+                slot.classList.remove('highlight');
+                checkEmpty();
+                // Mulai ulang animasi shuffle jika ada kata di bank
+                startShuffleAnimation();
+            }
+
+            function returnToBank(card,slot){
+                card.classList.remove('placed','dragging');
+                card.style.position='absolute';
+                // Tambahkan animasi kembali ke bank
+                card.style.transition = 'left 0.8s ease-in-out, top 0.8s ease-in-out';
+                bankEl.appendChild(card);
+                // Posisikan di bank dengan posisi acak
+                var bankRect = bankEl.getBoundingClientRect();
+                var x = 20 + Math.random() * (bankEl.offsetWidth - card.offsetWidth - 40);
+                var y = 20 + Math.random() * (bankEl.offsetHeight - card.offsetHeight - 40);
+                posInBank(card, bankRect.left + x, bankRect.top + y);
+                if(slot)slot.classList.remove('highlight');
+                checkEmpty();
+                // Mulai ulang animasi shuffle
+                startShuffleAnimation();
+            }
+
+            // Fungsi untuk menggerakkan kata secara acak di word bank
+            function startShuffleAnimation() {
+                if (shuffleTimer) {
+                    clearInterval(shuffleTimer);
+                    shuffleTimer = null;
+                }
+                
+                // Hanya jalankan jika ada kata di bank
+                var bankCards = bankEl.querySelectorAll('.word-card');
+                if (bankCards.length === 0) return;
+                
+                // Fungsi untuk menggerakkan satu kata
+                function shuffleSingleCard(card) {
+                    if (!card || card.classList.contains('dragging') || card.classList.contains('placed')) return;
+                    
+                    var bankRect = bankEl.getBoundingClientRect();
+                    var maxX = bankEl.offsetWidth - card.offsetWidth - 8;
+                    var maxY = bankEl.offsetHeight - card.offsetHeight - 8;
+                    var newX = 4 + Math.random() * maxX;
+                    var newY = 4 + Math.random() * maxY;
+                    
+                    // Animasi transisi yang halus
+                    card.style.transition = 'left 2s ease-in-out, top 2s ease-in-out';
+                    card.style.left = newX + 'px';
+                    card.style.top = newY + 'px';
+                }
+                
+                // Gerakkan semua kata di bank secara acak
+                function shuffleAllCards() {
+                    var currentCards = bankEl.querySelectorAll('.word-card');
+                    if (currentCards.length === 0) {
+                        if (shuffleTimer) {
+                            clearInterval(shuffleTimer);
+                            shuffleTimer = null;
+                        }
+                        return;
+                    }
+                    
+                    // Pilih beberapa kata untuk digerakkan secara acak
+                    var cardsToMove = [];
+                    for (var i = 0; i < currentCards.length; i++) {
+                        if (!currentCards[i].classList.contains('dragging') && 
+                            !currentCards[i].classList.contains('placed')) {
+                            cardsToMove.push(currentCards[i]);
+                        }
+                    }
+                    
+                    // Jika tidak ada kata yang bisa digerakkan, coba lagi nanti
+                    if (cardsToMove.length === 0) return;
+                    
+                    // Pilih subset acak untuk digerakkan
+                    var numToMove = Math.min(2, cardsToMove.length);
+                    var shuffledIndices = shuffle(Array.from({length: cardsToMove.length}, (_, i) => i));
+                    for (var j = 0; j < numToMove && j < shuffledIndices.length; j++) {
+                        shuffleSingleCard(cardsToMove[shuffledIndices[j]]);
+                    }
+                }
+                
+                // Jalankan shuffle setiap 3-5 detik
+                shuffleTimer = setInterval(shuffleAllCards, 3000 + Math.random() * 2000);
+                
+                // Jalankan shuffle pertama setelah 500ms
+                setTimeout(shuffleAllCards, 500);
+            }
+
+            function onStart(e){
+                var card=e.target.closest('.word-card');
+                if(!card||card.classList.contains('dragging'))return;
+                e.preventDefault();
+                
+                // Hentikan animasi shuffle saat drag dimulai
+                if (shuffleTimer) {
+                    clearInterval(shuffleTimer);
+                    shuffleTimer = null;
+                }
+                
+                dragCard=card;
+                var pt=e.touches?e.touches[0]:e;
+                startX=pt.clientX;startY=pt.clientY;
+                var cr=card.getBoundingClientRect();
+                startLeft=cr.left;startTop=cr.top;
+                origSlot=card.closest('.word-slot');
+
+                // Matikan transisi saat drag
+                card.style.transition = 'none';
+
+                if(card.classList.contains('placed')){
+                    card.classList.remove('placed');
+                    card.style.position='absolute';
+                    document.body.appendChild(card);
+                    card.style.left=startLeft+'px';
+                    card.style.top=startTop+'px';
+                    card.style.zIndex='10000';
+                } else {
+                    startLeft=parseFloat(card.style.left)||cr.left-bankEl.getBoundingClientRect().left;
+                    startTop=parseFloat(card.style.top)||cr.top-bankEl.getBoundingClientRect().top;
+                }
+                card.classList.add('dragging');
+                refreshSlots();
+            }
+
+            function onMove(e){
+                if(!dragCard)return;
+                e.preventDefault();
+                var pt=e.touches?e.touches[0]:e;
+                var dx=pt.clientX-startX,dy=pt.clientY-startY;
+                dragCard.style.left=(startLeft+dx)+'px';
+                dragCard.style.top=(startTop+dy)+'px';
+                slots.forEach(function(s){s.classList.remove('highlight');});
+                var ns=nearestSlot(pt.clientX,pt.clientY);
+                if(ns)ns.classList.add('highlight');
+            }
+
+            function onEnd(e){
+                if(!dragCard)return;
+                var pt=e.changedTouches?e.changedTouches[0]:e;
+                var cr=dragCard.getBoundingClientRect();
+                var cx=cr.left+cr.width/2,cy=cr.top+cr.height/2;
+                var slot=nearestSlot(cx,cy);
+                if(slot){placeInSlot(dragCard,slot);}
+                else{
+                    dragCard.classList.remove('dragging');
+                    if(origSlot){
+                        placeInSlot(dragCard,origSlot);
+                    } else {
+                        returnToBank(dragCard,null);
+                    }
+                }
+                dragCard=null;origSlot=null;
+                slots.forEach(function(s){s.classList.remove('highlight');});
+                
+                // Mulai ulang animasi shuffle
+                startShuffleAnimation();
+            }
+
+            bankEl.addEventListener('mousedown',onStart);
+            bankEl.addEventListener('touchstart',onStart,{passive:false});
+            document.addEventListener('mousemove',onMove);
+            document.addEventListener('touchmove',onMove,{passive:false});
+            document.addEventListener('mouseup',onEnd);
+            document.addEventListener('touchend',onEnd);
+
+            /* Klik ganda untuk kembalikan kata dari slot ke bank */
+            sentenceEl.addEventListener('dblclick',function(e){
+                var card=e.target.closest('.word-card.placed');
+                if(!card)return;
+                var slot=card.closest('.word-slot');
+                if(slot)card.classList.remove('placed');
+                returnToBank(card,slot);
+            });
+
+            // Inisialisasi animasi shuffle
+            setTimeout(startShuffleAnimation, 300);
+
+            return{
+                refreshCards:refreshCards,
+                refreshSlots:refreshSlots,
+                checkEmpty:checkEmpty,
+                returnAllToBank:function(){
+                    if (shuffleTimer) {
+                        clearInterval(shuffleTimer);
+                        shuffleTimer = null;
+                    }
+                    sentenceEl.querySelectorAll('.word-card.placed').forEach(function(c){
+                        c.classList.remove('placed');
+                        returnToBank(c,null);
+                    });
+                    setTimeout(startShuffleAnimation, 300);
+                },
+                posInBank:posInBank,
+                shuffleBank:function(){
+                    if (shuffleTimer) {
+                        clearInterval(shuffleTimer);
+                        shuffleTimer = null;
+                    }
+                    bankEl.querySelectorAll('.word-card').forEach(function(c){
+                        if (!c.classList.contains('placed')) {
+                            var bankRect = bankEl.getBoundingClientRect();
+                            var x = 20 + Math.random() * (bankEl.offsetWidth - c.offsetWidth - 40);
+                            var y = 20 + Math.random() * (bankEl.offsetHeight - c.offsetHeight - 40);
+                            posInBank(c, bankRect.left + x, bankRect.top + y);
+                        }
+                    });
+                    setTimeout(startShuffleAnimation, 300);
+                },
+                stopShuffle: function() {
+                    if (shuffleTimer) {
+                        clearInterval(shuffleTimer);
+                        shuffleTimer = null;
+                    }
+                },
+                startShuffle: startShuffleAnimation
+            };
+        }
+
+        /* ===== SINGLE PLAYER GAME ===== */
+        var spState = {
+            qIndex: 0,
+            score: 0,
+            answered: false,
+            current: null,
+            engine: null,
+            totalQuestions: 0
+        };
+        var spTotal = 10;
+
+        function spLoadQuestion(){
+            if(spState.qIndex >= spState.totalQuestions || spState.qIndex >= SENTENCES.length){
+                spEndGame();
+                return;
+            }
+            spState.answered = false;
+            var q = SENTENCES[spState.qIndex];
+            spState.current = q;
+            var words = getWords(q.text);
+            var shuffled = shuffle(words);
+
+            document.getElementById('spQ').textContent = (spState.qIndex + 1) + '/' + spState.totalQuestions;
+            document.getElementById('spScore').textContent = spState.score;
+            setTypeTag(document.getElementById('spType'), q.type);
+            setLevelBadge(document.getElementById('spLevel'), currentLevel);
+            setTenseBadge(document.getElementById('spTenseBadge'), currentTense);
+
+            var bank = document.getElementById('spBank');
+            var sent = document.getElementById('spSentence');
+            bank.querySelectorAll('.word-card').forEach(function(c){ c.remove(); });
+            sent.querySelectorAll('.word-slot').forEach(function(s){ s.remove(); });
+
+            for(var i = 0; i < words.length; i++){
+                var slot = document.createElement('div');
+                slot.className = 'word-slot';
+                var num = document.createElement('span');
+                num.className = 'slot-number';
+                num.textContent = i + 1;
+                slot.appendChild(num);
+                sent.appendChild(slot);
+            }
+            if(words.length === 0){
+                var ph = document.createElement('div');
+                ph.className = 'sentence-placeholder';
+                ph.innerHTML = '<i class="fas fa-arrow-up"></i> Place words here';
+                sent.appendChild(ph);
+            }
+
+            shuffled.forEach(function(w, idx){
+                var card = document.createElement('div');
+                card.className = 'word-card';
+                if(punctSet.has(w)) card.classList.add('punct');
+                card.textContent = w;
+                var pal = PALETTE[idx % PALETTE.length];
+                card.style.background = pal.bg;
+                card.style.borderColor = pal.bd;
+                card.style.color = pal.tx;
+                card.style.position = 'absolute';
+                // Posisi awal acak
+                var x = 20 + Math.random() * (bank.offsetWidth - 80);
+                var y = 20 + Math.random() * (bank.offsetHeight - 60);
+                card.style.left = x + 'px';
+                card.style.top = y + 'px';
+                bank.appendChild(card);
+            });
+
+            document.getElementById('spFeedback').innerHTML = '';
+            document.getElementById('spCheck').disabled = false;
+            document.getElementById('spNext').style.display = 'none';
+            sent.className = 'sentence-area';
+
+            if(spState.engine){
+                setTimeout(function(){
+                    spState.engine.shuffleBank();
+                    spState.engine.checkEmpty();
+                }, 50);
+            }
+        }
+
+        function spInitEngine(){
+            if(!spState.engine){
+                spState.engine = initDragDrop(
+                    document.getElementById('spBank'),
+                    document.getElementById('spSentence'),
+                    document.getElementById('spEmpty'),
+                    null
+                );
+            }
+        }
+
+        function spCheckAnswer(){
+            if(spState.answered) return;
+            spState.answered = true;
+            document.getElementById('spCheck').disabled = true;
+            var sent = document.getElementById('spSentence');
+            var placed = sent.querySelectorAll('.word-card.placed');
+            var userAns = Array.from(placed).map(function(c){ return c.textContent; }).join(' ');
+            var correct = normalize(spState.current.text) === normalize(userAns);
+            var fb = document.getElementById('spFeedback');
+
+            // Hentikan animasi shuffle saat jawaban diperiksa
+            if(spState.engine) spState.engine.stopShuffle();
+
+            if(correct){
+                spState.score += 10;
+                document.getElementById('spScore').textContent = spState.score;
+                sent.classList.add('result-correct');
+                fb.innerHTML = '<div class="fb-msg fb-correct"><i class="fas fa-check-circle"></i> Correct! +10 points</div>';
+                playClap();
+                confetti();
+            } else {
+                sent.classList.add('result-wrong');
+                fb.innerHTML = '<div class="fb-msg fb-wrong"><i class="fas fa-times-circle"></i> Not quite right</div><div class="fb-hint">Correct answer: <span>' + spState.current.text + '</span></div>';
+                playHuhh();
+            }
+            document.getElementById('spNext').style.display = 'inline-flex';
+        }
+
+        function spNextQuestion(){
+            spState.qIndex++;
+            spLoadQuestion();
+        }
+
+        function spResetQuestion(){
+            if(spState.engine) spState.engine.returnAllToBank();
+            document.getElementById('spSentence').className = 'sentence-area';
+            document.getElementById('spFeedback').innerHTML = '';
+            document.getElementById('spCheck').disabled = false;
+            document.getElementById('spNext').style.display = 'none';
+            spState.answered = false;
+        }
+
+        function spStartGame(){
+            spState.qIndex = 0;
+            spState.score = 0;
+            spState.answered = false;
+            SENTENCES = getSentences();
+            TOTAL = SENTENCES.length;
+            spState.totalQuestions = Math.min(questionCountSetting, TOTAL);
+            showScreen('singleGame');
+            
+            // Inisialisasi engine setelah DOM siap
+            setTimeout(function(){
+                spInitEngine();
+                spLoadQuestion();
+            }, 50);
+        }
+
+        function spEndGame(){
+            var pct = spState.totalQuestions > 0 ? Math.round((spState.score / (spState.totalQuestions * 10)) * 100) : 0;
+            document.getElementById('spEndScore').innerHTML = 'Your Score: <span class="big">' + spState.score + '</span> / ' + (spState.totalQuestions * 10);
+            var msg = '';
+            if(pct >= 90) msg = 'Outstanding! You are a grammar master!';
+            else if(pct >= 70) msg = 'Great job! Keep practicing!';
+            else if(pct >= 50) msg = 'Good effort! You can do better!';
+            else msg = 'Keep learning! Practice makes perfect!';
+            document.getElementById('spEndMsg').textContent = msg + ' (' + pct + '%)';
+            showScreen('singleEnd');
+            if(pct >= 70) confetti();
+        }
+
+        /* Fungsi kembali ke dashboard utama dari single player */
+        function spBackToMain() {
+            if(confirm('Apakah Anda yakin ingin kembali ke menu utama? Progress akan hilang.')) {
+                showScreen('modeSelect');
+                // Reset state
+                spState.qIndex = 0;
+                spState.score = 0;
+                spState.answered = false;
+                spState.current = null;
+                if(spState.engine) {
+                    spState.engine.stopShuffle();
+                    spState.engine.returnAllToBank();
+                }
+                document.getElementById('spFeedback').innerHTML = '';
+                document.getElementById('spSentence').className = 'sentence-area';
+            }
+        }
+
+        /* ===== TWO PLAYER GAME ===== */
+        var tpState = {
+            round: 0,
+            totalRounds: 10,
+            p1Score: 0,
+            p2Score: 0,
+            p1Done: false,
+            p2Done: false,
+            current: null,
+            p1Engine: null,
+            p2Engine: null,
+            roundWinner: null // 'p1' or 'p2'
+        };
+
+        function tpLoadRound(){
+            if(tpState.round >= tpState.totalRounds || tpState.round >= SENTENCES.length){
+                tpEndGame();
+                return;
+            }
+            tpState.p1Done = false;
+            tpState.p2Done = false;
+            tpState.roundWinner = null;
+            var q = SENTENCES[tpState.round];
+            tpState.current = q;
+            var words = getWords(q.text);
+
+            document.getElementById('tpRound').textContent = (tpState.round + 1) + '/' + tpState.totalRounds;
+            document.getElementById('tpP1S').textContent = tpState.p1Score;
+            document.getElementById('tpP2S').textContent = tpState.p2Score;
+            setLevelBadge(document.getElementById('tpLevel'), currentLevel);
+            setTenseBadge(document.getElementById('tpTenseBadge'), currentTense);
+            setTypeTag(document.getElementById('p1Type'), q.type);
+            setTypeTag(document.getElementById('p2Type'), q.type);
+
+            document.getElementById('roundBanner').classList.remove('show', 'p1-win', 'p2-win');
+            document.getElementById('tpNext').style.display = 'none';
+            document.getElementById('p1Overlay').classList.remove('show');
+            document.getElementById('p2Overlay').classList.remove('show');
+            document.getElementById('p1Panel').classList.remove('locked', 'winner');
+            document.getElementById('p2Panel').classList.remove('locked', 'winner');
+            document.getElementById('p1Feedback').innerHTML = '';
+            document.getElementById('p2Feedback').innerHTML = '';
+            document.getElementById('p1Check').disabled = false;
+            document.getElementById('p2Check').disabled = false;
+
+            ['p1', 'p2'].forEach(function(pid){
+                var bank = document.getElementById(pid + 'Bank');
+                var sent = document.getElementById(pid + 'Sentence');
+                bank.querySelectorAll('.word-card').forEach(function(c){ c.remove(); });
+                sent.querySelectorAll('.word-slot').forEach(function(s){ s.remove(); });
+                var shuffled = shuffle(words);
+                for(var i = 0; i < words.length; i++){
+                    var slot = document.createElement('div');
+                    slot.className = 'word-slot';
+                    var num = document.createElement('span');
+                    num.className = 'slot-number';
+                    num.textContent = i + 1;
+                    slot.appendChild(num);
+                    sent.appendChild(slot);
+                }
+                if(words.length === 0){
+                    var ph = document.createElement('div');
+                    ph.className = 'sentence-placeholder';
+                    ph.innerHTML = '<i class="fas fa-arrow-up"></i> Place words here';
+                    sent.appendChild(ph);
+                }
+                shuffled.forEach(function(w, idx){
+                    var card = document.createElement('div');
+                    card.className = 'word-card';
+                    if(punctSet.has(w)) card.classList.add('punct');
+                    card.textContent = w;
+                    var pal = PALETTE[(idx + (pid === 'p2' ? 5 : 0)) % PALETTE.length];
+                    card.style.background = pal.bg;
+                    card.style.borderColor = pal.bd;
+                    card.style.color = pal.tx;
+                    card.style.position = 'absolute';
+                    var x = 20 + Math.random() * (bank.offsetWidth - 80);
+                    var y = 20 + Math.random() * (bank.offsetHeight - 60);
+                    card.style.left = x + 'px';
+                    card.style.top = y + 'px';
+                    bank.appendChild(card);
+                });
+                sent.className = 'tp-sentence';
+            });
+
+            setTimeout(function(){
+                if(tpState.p1Engine) tpState.p1Engine.shuffleBank();
+                if(tpState.p2Engine) tpState.p2Engine.shuffleBank();
+            }, 50);
+        }
+
+        function tpCheckPlayer(pid){
+            if(pid === 'p1' && tpState.p1Done) return;
+            if(pid === 'p2' && tpState.p2Done) return;
+
+            var sent = document.getElementById(pid + 'Sentence');
+            var placed = sent.querySelectorAll('.word-card.placed');
+            var userAns = Array.from(placed).map(function(c){ return c.textContent; }).join(' ');
+            var correct = normalize(tpState.current.text) === normalize(userAns);
+            var fb = document.getElementById(pid + 'Feedback');
+            var other = pid === 'p1' ? 'p2' : 'p1';
+
+            // Hentikan animasi shuffle untuk player yang sudah selesai
+            if(pid === 'p1' && tpState.p1Engine) tpState.p1Engine.stopShuffle();
+            if(pid === 'p2' && tpState.p2Engine) tpState.p2Engine.stopShuffle();
+
+            if(correct){
+                if(pid === 'p1'){ 
+                    tpState.p1Score += 10; 
+                    tpState.p1Done = true; 
+                    document.getElementById('tpP1S').textContent = tpState.p1Score; 
+                    // Tandai P1 sebagai pemenang round jika P2 belum selesai
+                    if(!tpState.p2Done) tpState.roundWinner = 'p1';
+                }
+                else{ 
+                    tpState.p2Score += 10; 
+                    tpState.p2Done = true; 
+                    document.getElementById('tpP2S').textContent = tpState.p2Score;
+                    // Tandai P2 sebagai pemenang round jika P1 belum selesai
+                    if(!tpState.p1Done) tpState.roundWinner = 'p2';
+                }
+                sent.classList.add('result-correct');
+                fb.innerHTML = '<div class="fb-msg fb-correct"><i class="fas fa-check-circle"></i> Correct! +10</div>';
+                document.getElementById(pid + 'Check').disabled = true;
+                
+                // Tampilkan overlay lawan jika lawan belum selesai
+                if(!tpState[other + 'Done']){
+                    document.getElementById(other + 'Overlay').classList.add('show');
+                    document.getElementById(other + 'Overlay').querySelector('span').textContent = 'Opponent answered!';
+                }
+                playClap();
+                
+                // Tampilkan banner pemenang segera setelah ada yang selesai
+                if(tpState.p1Done || tpState.p2Done) {
+                    tpShowRoundResult();
+                }
+            } else {
+                sent.classList.add('result-wrong');
+                fb.innerHTML = '<div class="fb-msg fb-wrong"><i class="fas fa-times-circle"></i> Wrong!</div>';
+                playHuhh();
+                setTimeout(function(){
+                    sent.classList.remove('result-wrong');
+                    fb.innerHTML = '';
+                }, 1200);
+            }
+
+            // Jika kedua pemain sudah selesai, tampilkan result
+            if(tpState.p1Done && tpState.p2Done){
+                tpShowRoundResult();
+            } else if(tpState.p1Done || tpState.p2Done){
+                document.getElementById(pid + 'Panel').classList.add('locked');
+            }
+        }
+
+        function tpShowRoundResult(){
+            // Jika belum ada pemenang dan kedua pemain selesai
+            if(!tpState.roundWinner && tpState.p1Done && tpState.p2Done) {
+                tpState.roundWinner = 'both';
+            }
+            
+            var banner = document.getElementById('roundBanner');
+            // Tampilkan pemenang round
+            if(tpState.roundWinner === 'p1'){
+                banner.className = 'round-banner show p1-win';
+                banner.innerHTML = '<i class="fas fa-trophy"></i> Player 1 answered first!';
+                document.getElementById('p1Panel').classList.add('winner');
+                confetti();
+            } else if(tpState.roundWinner === 'p2'){
+                banner.className = 'round-banner show p2-win';
+                banner.innerHTML = '<i class="fas fa-trophy"></i> Player 2 answered first!';
+                document.getElementById('p2Panel').classList.add('winner');
+                confetti();
+            } else if(tpState.p1Done && tpState.p2Done){
+                banner.className = 'round-banner show p1-win';
+                banner.innerHTML = '<i class="fas fa-handshake"></i> Both answered!';
+            }
+            document.getElementById('tpNext').style.display = 'inline-flex';
+            document.getElementById('p1Check').disabled = true;
+            document.getElementById('p2Check').disabled = true;
+            
+            // Hentikan animasi shuffle untuk kedua player
+            if(tpState.p1Engine) tpState.p1Engine.stopShuffle();
+            if(tpState.p2Engine) tpState.p2Engine.stopShuffle();
+        }
+
+        function tpNextRound(){
+            tpState.round++;
+            tpLoadRound();
+        }
+
+        function tpResetRound(){
+            if(tpState.p1Engine) {
+                tpState.p1Engine.stopShuffle();
+                tpState.p1Engine.returnAllToBank();
+            }
+            if(tpState.p2Engine) {
+                tpState.p2Engine.stopShuffle();
+                tpState.p2Engine.returnAllToBank();
+            }
+            document.getElementById('p1Sentence').className = 'tp-sentence';
+            document.getElementById('p2Sentence').className = 'tp-sentence';
+            document.getElementById('p1Feedback').innerHTML = '';
+            document.getElementById('p2Feedback').innerHTML = '';
+            document.getElementById('p1Check').disabled = false;
+            document.getElementById('p2Check').disabled = false;
+            document.getElementById('roundBanner').classList.remove('show', 'p1-win', 'p2-win');
+            document.getElementById('tpNext').style.display = 'none';
+            tpState.p1Done = false;
+            tpState.p2Done = false;
+            tpState.roundWinner = null;
+            
+            setTimeout(function(){
+                if(tpState.p1Engine) tpState.p1Engine.shuffleBank();
+                if(tpState.p2Engine) tpState.p2Engine.shuffleBank();
+            }, 300);
+        }
+
+        function tpStartGame(){
+            tpState.round = 0;
+            tpState.p1Score = 0;
+            tpState.p2Score = 0;
+            tpState.p1Done = false;
+            tpState.p2Done = false;
+            tpState.roundWinner = null;
+            SENTENCES = getSentences();
+            TOTAL = SENTENCES.length;
+            tpState.totalRounds = Math.min(questionCountSetting, TOTAL);
+            showScreen('twoPlayerGame');
+            
+            setTimeout(function(){
+                tpState.p1Engine = initDragDrop(document.getElementById('p1Bank'), document.getElementById('p1Sentence'), document.getElementById('p1Empty'), null);
+                tpState.p2Engine = initDragDrop(document.getElementById('p2Bank'), document.getElementById('p2Sentence'), document.getElementById('p2Empty'), null);
+                tpLoadRound();
+            }, 50);
+        }
+
+        function tpEndGame(){
+            var t = document.getElementById('champTitle');
+            var m = document.getElementById('champMsg');
+            document.getElementById('champP1N').textContent = tpState.p1Score;
+            document.getElementById('champP2N').textContent = tpState.p2Score;
+            document.getElementById('champP1C').classList.remove('winner-card');
+            document.getElementById('champP2C').classList.remove('winner-card');
+            if(tpState.p1Score > tpState.p2Score){
+                t.innerHTML = '<span style="color:var(--p1dark)"><i class="fas fa-crown" style="color:#FFD700"></i> Player 1 Wins!</span>';
+                m.textContent = 'Congratulations Player 1! What a great performance!';
+                document.getElementById('champP1C').classList.add('winner-card');
+            } else if(tpState.p2Score > tpState.p1Score){
+                t.innerHTML = '<span style="color:var(--p2dark)"><i class="fas fa-crown" style="color:#FFD700"></i> Player 2 Wins!</span>';
+                m.textContent = 'Congratulations Player 2! What a great performance!';
+                document.getElementById('champP2C').classList.add('winner-card');
+            } else {
+                t.innerHTML = '<span style="color:var(--accent)"><i class="fas fa-handshake"></i> It\'s a Tie!</span>';
+                m.textContent = 'Amazing! Both players are equally skilled!';
+            }
+            showScreen('championScreen');
+            confetti();
+        }
+
+        /* Fungsi kembali ke dashboard utama dari two player */
+        function tpBackToMain() {
+            if(confirm('Apakah Anda yakin ingin kembali ke menu utama? Progress akan hilang.')) {
+                showScreen('modeSelect');
+                // Reset state
+                tpState.round = 0;
+                tpState.p1Score = 0;
+                tpState.p2Score = 0;
+                tpState.p1Done = false;
+                tpState.p2Done = false;
+                tpState.current = null;
+                tpState.roundWinner = null;
+                if(tpState.p1Engine) {
+                    tpState.p1Engine.stopShuffle();
+                    tpState.p1Engine.returnAllToBank();
+                }
+                if(tpState.p2Engine) {
+                    tpState.p2Engine.stopShuffle();
+                    tpState.p2Engine.returnAllToBank();
+                }
+                document.getElementById('p1Feedback').innerHTML = '';
+                document.getElementById('p2Feedback').innerHTML = '';
+                document.getElementById('p1Sentence').className = 'tp-sentence';
+                document.getElementById('p2Sentence').className = 'tp-sentence';
+                document.getElementById('roundBanner').classList.remove('show', 'p1-win', 'p2-win');
+                document.getElementById('tpNext').style.display = 'none';
+            }
+        }
+
+        /* ===== DASHBOARD LOGIC ===== */
+        var ADMIN_PW = 'guru123';
+
+        function showStatus(elId, msg, type){
+            var el = document.getElementById(elId);
+            el.className = 'status-msg ' + type;
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(function(){ el.style.display = 'none'; }, 5000);
+        }
+
+        document.getElementById('openDashboard').addEventListener('click', function(){
+            document.getElementById('dashboardModal').classList.add('active');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginStatus').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('dashboardSection').style.display = 'none';
+        });
+
+        document.getElementById('closeDashboard').addEventListener('click', function(){
+            document.getElementById('dashboardModal').classList.remove('active');
+        });
+
+        document.getElementById('dashboardModal').addEventListener('click', function(e){
+            if(e.target === this) this.classList.remove('active');
+        });
+
+        document.getElementById('loginBtn').addEventListener('click', function(){
+            var pw = document.getElementById('adminPassword').value;
+            if(pw === ADMIN_PW){
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboardSection').style.display = 'block';
+                document.getElementById('apiKeyInput').value = GROQ_API_KEY;
+                document.getElementById('tenseSelect').value = currentTense;
+                document.getElementById('levelSelect').value = currentLevel;
+                document.getElementById('typeSelect').value = currentType;
+                document.getElementById('questionCount').value = questionCountSetting;
+            } else {
+                showStatus('loginStatus', 'Password salah! Coba lagi.', 'error');
+            }
+        });
+
+        document.getElementById('adminPassword').addEventListener('keydown', function(e){
+            if(e.key === 'Enter') document.getElementById('loginBtn').click();
+        });
+
+        /* Simpan Pengaturan */
+        document.getElementById('saveSettingsBtn').addEventListener('click', function(){
+            GROQ_API_KEY = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('groq_api_key', GROQ_API_KEY);
+
+            currentTense = document.getElementById('tenseSelect').value;
+            currentLevel = document.getElementById('levelSelect').value;
+            currentType = document.getElementById('typeSelect').value;
+            questionCountSetting = Math.max(5, Math.min(30, parseInt(document.getElementById('questionCount').value) || 10));
+
+            localStorage.setItem('selected_tense', currentTense);
+            localStorage.setItem('selected_level', currentLevel);
+            localStorage.setItem('selected_type', currentType);
+            localStorage.setItem('selected_count', questionCountSetting);
+
+            SENTENCES = getSentences();
+            TOTAL = SENTENCES.length;
+            updateTenseIndicator();
+
+            showStatus('saveStatus', 'Pengaturan berhasil disimpan! Tenses: ' + (TENSE_LABELS[currentTense] || '') + ', Level: ' + currentLevel, 'success');
+        });
+
+        /* Tombol Kembali ke Dashboard Utama */
+        document.getElementById('backToDashboardBtn').addEventListener('click', function(){
+            /* Pastikan pengaturan tersimpan dulu */
+            GROQ_API_KEY = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('groq_api_key', GROQ_API_KEY);
+            currentTense = document.getElementById('tenseSelect').value;
+            currentLevel = document.getElementById('levelSelect').value;
+            currentType = document.getElementById('typeSelect').value;
+            questionCountSetting = Math.max(5, Math.min(30, parseInt(document.getElementById('questionCount').value) || 10));
+            localStorage.setItem('selected_tense', currentTense);
+            localStorage.setItem('selected_level', currentLevel);
+            localStorage.setItem('selected_type', currentType);
+            localStorage.setItem('selected_count', questionCountSetting);
+            SENTENCES = getSentences();
+            TOTAL = SENTENCES.length;
+            updateTenseIndicator();
+
+            /* Tutup modal dan kembali ke dashboard utama */
+            document.getElementById('dashboardModal').classList.remove('active');
+            showScreen('modeSelect');
+        });
+
+        /* Generate dengan AI */
+        document.getElementById('generateBtn').addEventListener('click', async function(){
+            var btn = this;
+            
+            // Ambil API Key dari input
+            var apiKeyInput = document.getElementById('apiKeyInput');
+            GROQ_API_KEY = apiKeyInput.value.trim();
+            
+            // Validasi API Key
+            if(!GROQ_API_KEY) {
+                showStatus('generateStatus', 'Mohon masukkan Groq API Key terlebih dahulu!', 'error');
+                apiKeyInput.focus();
+                return;
+            }
+            
+            if(GROQ_API_KEY.length < 10) {
+                showStatus('generateStatus', 'API Key tidak valid. Pastikan Anda memasukkan API Key yang benar dari console.groq.com', 'error');
+                apiKeyInput.focus();
+                return;
+            }
+            
+            localStorage.setItem('groq_api_key', GROQ_API_KEY);
+            
+            currentTense = document.getElementById('tenseSelect').value;
+            currentLevel = document.getElementById('levelSelect').value;
+            currentType = document.getElementById('typeSelect').value;
+            questionCountSetting = Math.max(5, Math.min(30, parseInt(document.getElementById('questionCount').value) || 10));
+            
+            localStorage.setItem('selected_tense', currentTense);
+            localStorage.setItem('selected_level', currentLevel);
+            localStorage.setItem('selected_type', currentType);
+            localStorage.setItem('selected_count', questionCountSetting);
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Generating...';
+            document.getElementById('generateStatus').style.display = 'none';
+
+            try{
+                var questions = await generateQuestionsWithGroq(currentLevel, currentType, questionCountSetting, currentTense);
+                ALL_SENTENCES[currentTense] = questions;
+                SENTENCES = getSentences();
+                TOTAL = SENTENCES.length;
+                updateTenseIndicator();
+                showStatus('generateStatus', 'Berhasil generate ' + questions.length + ' soal untuk ' + (TENSE_LABELS[currentTense] || '') + '!', 'success');
+                confetti();
+            } catch(err){
+                showStatus('generateStatus', err.message, 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-magic"></i> Generate Soal dengan AI';
+        });
+
+        document.getElementById('resetDefaultBtn').addEventListener('click', function(){
+            ALL_SENTENCES.simple_present = [
+                {text:"The cat sleeps on the mat",type:"affirmative"},{text:"They play in the park",type:"affirmative"},
+                {text:"He drinks water every morning",type:"affirmative"},{text:"We eat lunch at noon",type:"affirmative"},
+                {text:"She does not like spicy food",type:"negative"},{text:"They do not go to school on Sunday",type:"negative"},
+                {text:"Do you like ice cream ?",type:"interrogative"},{text:"Does she read books every day ?",type:"interrogative"}
+            ];
+            ALL_SENTENCES.simple_past = [
+                {text:"She visited her grandmother last week",type:"affirmative"},{text:"They played football yesterday",type:"affirmative"},
+                {text:"She did not go to school yesterday",type:"negative"},{text:"Did you go to school yesterday ?",type:"interrogative"}
+            ];
+            ALL_SENTENCES.present_continuous = [
+                {text:"She is reading a book now",type:"affirmative"},{text:"They are playing in the garden",type:"affirmative"},
+                {text:"She is not reading a book now",type:"negative"},{text:"Is she reading a book now ?",type:"interrogative"}
+            ];
+            ALL_SENTENCES.past_continuous = [
+                {text:"She was reading a book at that time",type:"affirmative"},{text:"They were playing when it rained",type:"affirmative"},
+                {text:"She was not reading at that time",type:"negative"},{text:"Was she reading at that time ?",type:"interrogative"}
+            ];
+            ALL_SENTENCES.simple_future = [
+                {text:"She will visit her grandmother tomorrow",type:"affirmative"},{text:"They will play football next week",type:"affirmative"},
+                {text:"She will not go to school tomorrow",type:"negative"},{text:"Will you go to school tomorrow ?",type:"interrogative"}
+            ];
+            ALL_SENTENCES.future_continuous = [
+                {text:"She will be reading a book at eight",type:"affirmative"},{text:"They will be playing at that time",type:"affirmative"},
+                {text:"She will not be reading at eight",type:"negative"},{text:"Will she be reading at eight ?",type:"interrogative"}
+            ];
+            currentTense = 'simple_present';
+            currentLevel = 'medium';
+            currentType = 'all';
+            questionCountSetting = 10;
+            localStorage.removeItem('selected_tense');
+            localStorage.removeItem('selected_level');
+            localStorage.removeItem('selected_type');
+            localStorage.removeItem('selected_count');
+            SENTENCES = getSentences();
+            TOTAL = SENTENCES.length;
+            updateTenseIndicator();
+            document.getElementById('tenseSelect').value = currentTense;
+            document.getElementById('levelSelect').value = currentLevel;
+            document.getElementById('typeSelect').value = currentType;
+            document.getElementById('questionCount').value = questionCountSetting;
+            showStatus('generateStatus', 'Pengaturan sudah di-reset ke default.', 'info');
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function(){
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('generateStatus').style.display = 'none';
+            document.getElementById('saveStatus').style.display = 'none';
+        });
+
+        /* ===== EVENT BINDINGS ===== */
+        document.getElementById('btnSolo').addEventListener('click', spStartGame);
+        document.getElementById('btnRace').addEventListener('click', tpStartGame);
+
+        document.getElementById('spMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
+        document.getElementById('tpMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
+
+        // Tombol kembali ke main menu dari single player
+        document.getElementById('spBackMain').addEventListener('click', spBackToMain);
+        
+        // Tombol kembali ke main menu dari two player
+        document.getElementById('tpBackMain').addEventListener('click', tpBackToMain);
+
+        document.getElementById('spCheck').addEventListener('click', spCheckAnswer);
+        document.getElementById('spReset').addEventListener('click', spResetQuestion);
+        document.getElementById('spNext').addEventListener('click', spNextQuestion);
+        document.getElementById('spGenerate').addEventListener('click', function(){
+            SENTENCES = getSentences();
+            TOTAL = SENTENCES.length;
+            spState.qIndex = 0;
+            spState.score = 0;
+            spState.totalQuestions = Math.min(questionCountSetting, TOTAL);
+            spLoadQuestion();
+        });
+
+        document.getElementById('p1Check').addEventListener('click', function(){ tpCheckPlayer('p1'); });
+        document.getElementById('p2Check').addEventListener('click', function(){ tpCheckPlayer('p2'); });
+        document.getElementById('tpReset').addEventListener('click', tpResetRound);
+        document.getElementById('tpNext').addEventListener('click', tpNextRound);
+        document.getElementById('tpGenerate').addEventListener('click', function(){
+            SENTENCES = getSentences();
+            TOTAL = SENTENCES.length;
+            tpState.round = 0;
+            tpState.p1Score = 0;
+            tpState.p2Score = 0;
+            tpState.totalRounds = Math.min(questionCountSetting, TOTAL);
+            tpLoadRound();
+        });
+
+        document.getElementById('spAgain').addEventListener('click', spStartGame);
+        document.getElementById('spEndMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
+        document.getElementById('champAgain').addEventListener('click', tpStartGame);
+        document.getElementById('champMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
+
+        /* Fix: Initialize spState.totalQuestions */
+        spState.totalQuestions = Math.min(questionCountSetting, TOTAL);
+
+    })();
+    </script>
+</body>
+</html>
