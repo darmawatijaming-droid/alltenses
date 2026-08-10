@@ -9,7 +9,7 @@
     <style>
         :root{--bg:#FFF8F0;--fg:#4A3728;--muted:#9B8B7A;--accent:#FF6B6B;--accent2:#4ECDC4;--card:#FFF;--border:#E8DDD0;--bank-bg:#E8F4FD;--bank-bd:#A8CCE8;--sent-bg:#FFF9E6;--sent-bd:#E8D080;--success:#6BCB77;--error:#FF6B6B;--p1:#FF9AA2;--p1dark:#C62828;--p2:#80DEEA;--p2dark:#00695C;--slot-bg:#F5F0E8;--slot-border:#D5C8B8}
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radial-gradient(circle,#E8DDD0 1px,transparent 1px);background-size:28px 28px;color:var(--fg);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column}
+        body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radical-gradient(circle,#E8DDD0 1px,transparent 1px);background-size:28px 28px;color:var(--fg);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column}
         .bg-blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;opacity:.07;filter:blur(2px)}
         .bg-blob-1{width:320px;height:320px;background:#FF9AA2;top:-100px;right:-80px;animation:bd 22s ease-in-out infinite}
         .bg-blob-2{width:240px;height:240px;background:#BAE1FF;bottom:-60px;left:-50px;animation:bd 17s ease-in-out infinite reverse}
@@ -138,7 +138,7 @@
         .vs-divider{display:flex;align-items:center;justify-content:center;padding:0 10px;font-family:'Fredoka One',cursive;font-size:26px;color:var(--muted);min-width:50px}
         .vs-divider span{background:var(--bg);border:3px solid var(--border);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
         .tp-bank{height:175px}
-        .player-check-wrap{text-align:center;margin-bottom:6px}
+        .player-check-wrap{text-align:center;margin-bottom:6px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
         .player-feedback{text-align:center;min-height:40px}
         .lock-overlay{display:none;position:absolute;inset:0;background:rgba(255,255,255,.65);border-radius:20px;z-index:50;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:16px;color:var(--muted);gap:8px;pointer-events:none;flex-direction:column}
         .lock-overlay.show{display:flex;pointer-events:auto}
@@ -159,6 +159,7 @@
         .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:0 2px 8px rgba(0,0,0,.08)!important}
         .btn-check{background:linear-gradient(135deg,#6BCB77,#4CAF50);color:#fff}
         .btn-reset{background:linear-gradient(135deg,#FFB74D,#FFA726);color:#fff}
+        .btn-retry{background:linear-gradient(135deg,#FF8A65,#E64A19);color:#fff}
         .btn-next{background:linear-gradient(135deg,#64B5F6,#42A5F5);color:#fff}
         .btn-generate{background:linear-gradient(135deg,#AB47BC,#8E24AA);color:#fff}
         .btn-again{background:linear-gradient(135deg,#FF9AA2,#FF6B6B);color:#fff;font-size:16px;padding:13px 32px}
@@ -258,6 +259,7 @@
             <div class="sentence-area" id="spSentence"></div>
             <div class="controls">
                 <button class="btn btn-check" id="spCheck"><i class="fas fa-check-circle"></i> Check</button>
+                <button class="btn btn-retry" id="spRetry"><i class="fas fa-undo"></i> Retry</button>
                 <button class="btn btn-reset" id="spReset"><i class="fas fa-redo-alt"></i> Reset</button>
                 <button class="btn btn-next" id="spNext"><i class="fas fa-arrow-right"></i> Next</button>
             </div>
@@ -304,7 +306,11 @@
                     <div class="hint-text"><i class="fas fa-hand-point-down"></i> Drag words into the slots below</div>
                     <div class="section-label"><i class="fas fa-pen-fancy"></i> Your Sentence</div>
                     <div class="tp-sentence" id="p1Sentence"></div>
-                    <div class="player-check-wrap"><button class="btn btn-check" id="p1Check"><i class="fas fa-check-circle"></i> Check</button></div>
+                    <div class="player-check-wrap">
+                        <button class="btn btn-check" id="p1Check"><i class="fas fa-check-circle"></i> Check</button>
+                        <button class="btn btn-retry" id="p1Retry"><i class="fas fa-undo"></i> Retry</button>
+                        <button class="btn btn-reset" id="p1Reset"><i class="fas fa-redo-alt"></i> Reset</button>
+                    </div>
                     <div class="player-feedback" id="p1Feedback"></div>
                     <div class="lock-overlay" id="p1Overlay"><i class="fas fa-hourglass-half"></i><span></span></div>
                 </div>
@@ -317,7 +323,11 @@
                     <div class="hint-text"><i class="fas fa-hand-point-down"></i> Drag words into the slots below</div>
                     <div class="section-label"><i class="fas fa-pen-fancy"></i> Your Sentence</div>
                     <div class="tp-sentence" id="p2Sentence"></div>
-                    <div class="player-check-wrap"><button class="btn btn-check" id="p2Check"><i class="fas fa-check-circle"></i> Check</button></div>
+                    <div class="player-check-wrap">
+                        <button class="btn btn-check" id="p2Check"><i class="fas fa-check-circle"></i> Check</button>
+                        <button class="btn btn-retry" id="p2Retry"><i class="fas fa-undo"></i> Retry</button>
+                        <button class="btn btn-reset" id="p2Reset"><i class="fas fa-redo-alt"></i> Reset</button>
+                    </div>
                     <div class="player-feedback" id="p2Feedback"></div>
                     <div class="lock-overlay" id="p2Overlay"><i class="fas fa-hourglass-half"></i><span></span></div>
                 </div>
@@ -879,9 +889,11 @@
                     var s=slots[i];
                     if(s.querySelector('.word-card.placed'))continue;
                     var sr=s.getBoundingClientRect();
+                    // PERBAIKAN: Perbesar area deteksi slot
                     var scx=sr.left+sr.width/2,scy=sr.top+sr.height/2;
                     var d=Math.hypot(px-scx,py-scy);
-                    if(d<bestDist&&d<120){bestDist=d;best=s;}
+                    // PERBAIKAN: Tingkatkan jarak deteksi dari 120px menjadi 200px
+                    if(d<bestDist&&d<200){bestDist=d;best=s;}
                 }
                 return best;
             }
@@ -1192,6 +1204,23 @@
             }
         }
 
+        // FUNGSI RETRY: Kembalikan semua kata ke bank tanpa mengubah skor
+        function spRetryQuestion(){
+            if(spState.engine) {
+                spState.engine.returnAllToBank();
+                // Hapus status jawaban
+                spState.answered = false;
+                document.getElementById('spCheck').disabled = false;
+                document.getElementById('spNext').style.display = 'none';
+                document.getElementById('spSentence').className = 'sentence-area';
+                document.getElementById('spFeedback').innerHTML = '';
+                // Mulai ulang animasi shuffle
+                setTimeout(function(){
+                    if(spState.engine) spState.engine.shuffleBank();
+                }, 300);
+            }
+        }
+
         function spInitEngine(){
             if(!spState.engine){
                 spState.engine = initDragDrop(
@@ -1383,6 +1412,28 @@
             }, 50);
         }
 
+        // FUNGSI RETRY untuk 2 player
+        function tpRetryPlayer(pid){
+            if(pid === 'p1' && tpState.p1Done) return;
+            if(pid === 'p2' && tpState.p2Done) return;
+            
+            var sent = document.getElementById(pid + 'Sentence');
+            var fb = document.getElementById(pid + 'Feedback');
+            var engine = pid === 'p1' ? tpState.p1Engine : tpState.p2Engine;
+            
+            if(engine) {
+                engine.returnAllToBank();
+                sent.className = 'tp-sentence';
+                fb.innerHTML = '';
+                document.getElementById(pid + 'Check').disabled = false;
+                document.getElementById(pid + 'Panel').classList.remove('locked');
+                // Mulai ulang animasi shuffle
+                setTimeout(function(){
+                    if(engine) engine.shuffleBank();
+                }, 300);
+            }
+        }
+
         function tpCheckPlayer(pid){
             if(pid === 'p1' && tpState.p1Done) return;
             if(pid === 'p2' && tpState.p2Done) return;
@@ -1430,12 +1481,11 @@
                 }
             } else {
                 sent.classList.add('result-wrong');
-                fb.innerHTML = '<div class="fb-msg fb-wrong"><i class="fas fa-times-circle"></i> Wrong!</div>';
+                fb.innerHTML = '<div class="fb-msg fb-wrong"><i class="fas fa-times-circle"></i> Wrong! Try again!</div>';
                 playHuhh();
-                setTimeout(function(){
-                    sent.classList.remove('result-wrong');
-                    fb.innerHTML = '';
-                }, 1200);
+                // Tidak menonaktifkan check, pemain bisa mencoba lagi
+                // Tapi jangan biarkan mereka langsung cek tanpa memperbaiki
+                // Biarkan mereka menggunakan tombol Retry atau Reset
             }
 
             // Jika kedua pemain sudah selesai, tampilkan result
@@ -1788,8 +1838,10 @@
         // Tombol kembali ke main menu dari two player
         document.getElementById('tpBackMain').addEventListener('click', tpBackToMain);
 
+        // Single player event bindings
         document.getElementById('spCheck').addEventListener('click', spCheckAnswer);
         document.getElementById('spReset').addEventListener('click', spResetQuestion);
+        document.getElementById('spRetry').addEventListener('click', spRetryQuestion);
         document.getElementById('spNext').addEventListener('click', spNextQuestion);
         document.getElementById('spGenerate').addEventListener('click', function(){
             SENTENCES = getSentences();
@@ -1800,8 +1852,33 @@
             spLoadQuestion();
         });
 
+        // Two player event bindings
         document.getElementById('p1Check').addEventListener('click', function(){ tpCheckPlayer('p1'); });
         document.getElementById('p2Check').addEventListener('click', function(){ tpCheckPlayer('p2'); });
+        document.getElementById('p1Retry').addEventListener('click', function(){ tpRetryPlayer('p1'); });
+        document.getElementById('p2Retry').addEventListener('click', function(){ tpRetryPlayer('p2'); });
+        document.getElementById('p1Reset').addEventListener('click', function(){ 
+            if(tpState.p1Engine) {
+                tpState.p1Engine.returnAllToBank();
+                document.getElementById('p1Sentence').className = 'tp-sentence';
+                document.getElementById('p1Feedback').innerHTML = '';
+                document.getElementById('p1Check').disabled = false;
+                setTimeout(function(){
+                    if(tpState.p1Engine) tpState.p1Engine.shuffleBank();
+                }, 300);
+            }
+        });
+        document.getElementById('p2Reset').addEventListener('click', function(){ 
+            if(tpState.p2Engine) {
+                tpState.p2Engine.returnAllToBank();
+                document.getElementById('p2Sentence').className = 'tp-sentence';
+                document.getElementById('p2Feedback').innerHTML = '';
+                document.getElementById('p2Check').disabled = false;
+                setTimeout(function(){
+                    if(tpState.p2Engine) tpState.p2Engine.shuffleBank();
+                }, 300);
+            }
+        });
         document.getElementById('tpReset').addEventListener('click', tpResetRound);
         document.getElementById('tpNext').addEventListener('click', tpNextRound);
         document.getElementById('tpGenerate').addEventListener('click', function(){
@@ -1814,6 +1891,7 @@
             tpLoadRound();
         });
 
+        // End screen buttons
         document.getElementById('spAgain').addEventListener('click', spStartGame);
         document.getElementById('spEndMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
         document.getElementById('champAgain').addEventListener('click', tpStartGame);
