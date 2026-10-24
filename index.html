@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Arrange the Sentence - AI Powered</title>
+    <title>Tenses Go, Race! - AI Powered</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root{--bg:#FFF8F0;--fg:#4A3728;--muted:#9B8B7A;--accent:#FF6B6B;--accent2:#4ECDC4;--card:#FFF;--border:#E8DDD0;--bank-bg:#E8F4FD;--bank-bd:#A8CCE8;--sent-bg:#FFF9E6;--sent-bd:#E8D080;--success:#6BCB77;--error:#FF6B6B;--p1:#FF9AA2;--p1dark:#C62828;--p2:#80DEEA;--p2dark:#00695C;--slot-bg:#F5F0E8;--slot-border:#D5C8B8}
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radical-gradient(circle,#E8DDD0 1px,transparent 1px);background-size:28px 28px;color:var(--fg);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column}
+        body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radial-gradient(circle,#E8DDD0 1px,transparent 1px);background-size:28px 28px;color:var(--fg);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column}
         .bg-blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;opacity:.07;filter:blur(2px)}
         .bg-blob-1{width:320px;height:320px;background:#FF9AA2;top:-100px;right:-80px;animation:bd 22s ease-in-out infinite}
         .bg-blob-2{width:240px;height:240px;background:#BAE1FF;bottom:-60px;left:-50px;animation:bd 17s ease-in-out infinite reverse}
@@ -21,27 +21,56 @@
         .game-container{max-width:960px;margin:0 auto;padding:16px;position:relative;z-index:1;flex:1}
         .screen{display:none}.screen.active{display:block}
 
-        /* ===== MODE SELECT ===== */
-        .mode-select{text-align:center;padding:40px 20px 10px}
-        .mode-title{font-family:'Fredoka One',cursive;font-size:44px;background:linear-gradient(135deg,#FF6B6B,#FFB74D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
-        .mode-sub{color:var(--muted);font-size:17px;font-weight:600;margin-bottom:12px}
-        .tense-indicator{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:14px;font-weight:700;font-size:15px;margin-bottom:32px;background:linear-gradient(135deg,#E8F5E9,#C8E6C9);color:#2E7D32;border:2px solid #A5D6A7}
-        .tense-indicator i{font-size:16px}
-        .mode-cards{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
-        .mode-card{width:270px;padding:38px 26px 30px;border-radius:24px;border:3px solid transparent;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 6px 24px rgba(0,0,0,.08);transition:all .25s;font-family:'Nunito',sans-serif}
-        .mode-card:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(0,0,0,.13)}
-        .mode-card:active{transform:translateY(-1px)}
-        .mode-card i.icon{font-size:46px;margin-bottom:4px}
-        .mode-name{font-family:'Fredoka One',cursive;font-size:22px}
-        .mode-desc{font-size:14px;font-weight:600;opacity:.8}
-        .mode-solo{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-color:#A5D6A7;color:#2E7D32}
-        .mode-solo i.icon{color:#43A047}
-        .mode-race{background:linear-gradient(135deg,#FFF3E0,#FFE0B2);border-color:#FFCC80;color:#E65100}
-        .mode-race i.icon{color:#FB8C00}
+        /* ===== MODE SELECT (TAMPILAN BARU) ===== */
+        #modeSelect {
+            /* GANTI bg-menu.jpg DENGAN LINK GITHUB ANDA JIKA PERLU */
+            background-color: #0b1426;
+            background-image: linear-gradient(to bottom, rgba(11,20,38,0) 60%, #0b1426 100%), url('https://github.com/darmawatijaming-droid/alltenses/blob/main/bg-menu-atas.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 5vh;
+        }
+        #modeSelect .mode-title, #modeSelect .mode-sub, #modeSelect .tense-indicator { display: none !important; }
+        #modeSelect .mode-select { padding: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        
+        #modeSelect .mode-cards {
+            display: flex; flex-direction: row; gap: 15px; margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.6); padding: 15px 25px; border-radius: 20px;
+            border: 2px solid rgba(100, 200, 255, 0.4); box-shadow: 0 0 20px rgba(0, 150, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        #modeSelect .mode-card {
+            width: 220px; padding: 20px; border-radius: 15px; border: none; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s; font-family: 'Nunito',sans-serif;
+        }
+        #modeSelect .mode-card:hover { transform: translateY(-5px) scale(1.05); }
+        #modeSelect .mode-solo { background: linear-gradient(135deg, #00d2ff, #0077ff); color: white; box-shadow: 0 4px 15px rgba(0, 150, 255, 0.5); }
+        #modeSelect .mode-race { background: linear-gradient(135deg, #ff00cc, #333399); color: white; box-shadow: 0 4px 15px rgba(255, 0, 200, 0.5); }
+        #modeSelect .mode-card i { font-size: 36px; margin-bottom: 5px; }
+        #modeSelect .mode-name { font-family: 'Fredoka One', cursive; font-size: 22px; letter-spacing: 1px; }
+        #modeSelect .mode-desc { font-size: 13px; font-weight: 700; opacity: 0.9; }
+        
+        #modeSelect .dashboard-btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none;
+            padding: 15px 40px; border-radius: 50px; font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(243, 156, 18, 0.5);
+            transition: all 0.2s; display: flex; align-items: center; gap: 10px;
+        }
+        #modeSelect .dashboard-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 20px rgba(243, 156, 18, 0.7); }
 
         /* ===== DASHBOARD GURU ===== */
-        .dashboard-btn{background:linear-gradient(135deg,#AB47BC,#8E24AA);color:#fff;border:none;padding:12px 28px;border-radius:16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s;box-shadow:0 4px 14px rgba(156,39,176,.2);margin-top:10px}
-        .dashboard-btn:hover{transform:translateY(-2px);box-shadow:0 7px 24px rgba(156,39,176,.35)}
         .dashboard-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:10000;align-items:center;justify-content:center;padding:20px}
         .dashboard-modal.active{display:flex}
         .dashboard-content{background:var(--card);border-radius:28px;padding:40px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;animation:fbin .4s ease-out}
@@ -55,7 +84,6 @@
         .form-group label i{margin-right:6px;color:#AB47BC}
         .form-group input,.form-group select{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;transition:border-color .2s;background:var(--bg)}
         .form-group input:focus,.form-group select:focus{outline:none;border-color:#AB47BC}
-        .form-group input[type="password"]{font-family:'Nunito',sans-serif}
         .form-group .help-text{font-size:12px;color:var(--muted);margin-top:4px}
         .btn-primary{background:linear-gradient(135deg,#AB47BC,#8E24AA);color:#fff;border:none;padding:14px 32px;border-radius:16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:all .2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
         .btn-primary:hover{transform:translateY(-2px);box-shadow:0 7px 24px rgba(156,39,176,.3)}
@@ -75,8 +103,13 @@
         .tense-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-weight:700;font-size:11px;background:linear-gradient(135deg,#E3F2FD,#BBDEFB);color:#1565C0;border:1.5px solid #90CAF9}
         .loading-spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin .8s ease-in-out infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
+        .info-box{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border:2px solid #90CAF9;border-radius:14px;padding:14px 18px;font-size:13px;color:#1565C0;font-weight:600;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+        .info-box i{font-size:18px;flex-shrink:0;margin-top:2px}
+        .proxy-status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-weight:700;font-size:11px;margin-left:8px}
+        .proxy-ok{background:#E8F5E9;color:#2E7D32;border:1.5px solid #A5D6A7}
+        .proxy-off{background:#FFF3E0;color:#E65100;border:1.5px solid #FFCC80}
 
-        /* ===== HEADER ===== */
+        /* ===== GAMEPLAY ===== */
         .header{background:linear-gradient(135deg,#FF9AA2 0%,#FFB7B2 45%,#FFDAC1 100%);border-radius:22px;padding:18px 24px;margin-bottom:18px;box-shadow:0 6px 24px rgba(255,154,162,.3);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;position:relative;overflow:hidden}
         .header::before{content:'';position:absolute;top:-35px;right:-35px;width:120px;height:120px;background:rgba(255,255,255,.15);border-radius:50%}
         .title{font-family:'Fredoka One',cursive;font-size:24px;color:#fff;text-shadow:2px 2px 6px rgba(180,80,80,.15);display:flex;align-items:center;gap:8px;position:relative;z-index:1}
@@ -86,10 +119,8 @@
         .stat-badge{background:rgba(255,255,255,.3);backdrop-filter:blur(4px);border-radius:13px;padding:7px 15px;font-weight:700;font-size:14px;color:#fff;display:flex;align-items:center;gap:7px}
         .stat-badge i{font-size:14px}
         .score-value{color:#FFF176;font-size:18px}
-        .menu-btn{background:rgba(255,255,255,.3);border:none;color:#fff;width:36px;height:36px;border-radius:11px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+        .menu-btn{background:rgba(255,255,255,.3);border:none;color:#fff;height:36px;padding:0 12px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;font-family:'Nunito',sans-serif}
         .menu-btn:hover{background:rgba(255,255,255,.5)}
-
-        /* ===== GAME ===== */
         .type-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:10px;font-weight:700;font-size:13px;margin-bottom:6px}
         .type-tag i{font-size:12px}
         .type-tag.t-aff{background:#E8F5E9;color:#2E7D32;border:1.5px solid #A5D6A7}
@@ -98,24 +129,18 @@
         .section-label{font-family:'Fredoka One',cursive;font-size:15px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:7px}
         .section-label i{font-size:13px}
         .hint-text{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:5px;justify-content:center}
-
-        .word-bank{position:relative;height:210px;background:linear-gradient(180deg,#EAF5FD,#D6EDF9);border:3px dashed var(--bank-bd);border-radius:20px;overflow:hidden;margin-bottom:4px;box-shadow:inset 0 3px 12px rgba(0,0,0,.04)}
+        .word-bank{position:relative;height:210px;background:linear-gradient(180deg,#EAF5FD,#D6EDF9);border:3px dashed var(--bank-bd);border-radius:20px;overflow:hidden;margin-bottom:4px;box-shadow:inset 0 3px 12px rgba(0,0,0,.04);box-sizing:border-box}
         .bank-empty-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:700;color:var(--bank-bd);font-size:14px;pointer-events:none;display:none;align-items:center;gap:7px}
         .bank-empty-msg.visible{display:flex}
-
         .word-card{position:absolute;display:inline-flex;align-items:center;justify-content:center;padding:9px 20px;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;cursor:grab;user-select:none;-webkit-user-select:none;box-shadow:0 3px 10px rgba(0,0,0,.1);border:2.5px solid;white-space:nowrap;transition:transform .15s,box-shadow .15s,left 2s ease-in-out,top 2s ease-in-out;z-index:1;touch-action:none;will-change:left,top;max-width:90%;box-sizing:border-box}
         .word-card.punct{font-size:22px;padding:9px 14px}
         .word-card:hover{transform:scale(1.06);box-shadow:0 5px 18px rgba(0,0,0,.15)}
         .word-card.dragging{cursor:grabbing;transform:scale(1.1)!important;box-shadow:0 10px 35px rgba(0,0,0,.25)!important;z-index:10000!important;transition:none!important}
-
-        /* ===== SENTENCE SLOTS ===== */
         .sentence-area,.tp-sentence{min-height:80px;padding:14px 18px;gap:10px 12px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;margin-bottom:16px;width:100%;box-sizing:border-box;background:repeating-linear-gradient(transparent,transparent 35px,rgba(224,200,128,.18) 35px,rgba(224,200,128,.18) 36px),linear-gradient(180deg,#FFFAE6,#FFF3CC);border:3px dashed var(--sent-bd);border-radius:20px;box-shadow:inset 0 3px 12px rgba(0,0,0,.04);transition:border-color .25s,background .25s,box-shadow .25s;position:relative}
         .tp-sentence{margin-bottom:10px;min-height:76px}
-        .word-slot{display:inline-flex;align-items:center;justify-content:center;min-width:65px;min-height:48px;padding:4px 6px;border:2.5px dashed var(--slot-border);border-radius:14px;background:var(--slot-bg);position:relative;transition:all .25s;flex-shrink:0}
+        .word-slot{display:inline-flex;align-items:center;justify-content:center;min-width:65px;min-height:48px;padding:4px 6px;border:2.5px dashed var(--slot-border);border-radius:14px;background:var(--slot-bg);position:relative;transition:all .25s;flex-shrink:0;box-sizing:border-box}
         .word-slot.highlight{border-color:var(--accent2);background:rgba(78,205,196,.1);box-shadow:0 0 20px rgba(78,205,196,.15)}
         .word-slot .word-card.placed{margin:0!important;border-style:solid!important;width:100%;min-height:42px;justify-content:center}
-        .word-slot .word-card.placed .return-x{display:none!important}
-        .word-slot .word-card.placed:hover .return-x{display:flex!important}
         .word-slot .slot-number{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;color:var(--muted);background:var(--bg);padding:0 6px;border-radius:4px;opacity:.6}
         .sentence-area.drag-hover .word-slot,.tp-sentence.drag-hover .word-slot{border-color:var(--accent2);background:rgba(78,205,196,.15)}
         .sentence-area.result-correct .word-slot,.tp-sentence.result-correct .word-slot{border-color:var(--success);background:rgba(107,203,119,.1)}
@@ -124,10 +149,6 @@
         .sentence-area.result-wrong,.tp-sentence.result-wrong{animation:ashake .5s ease;border-color:var(--error)!important}
         @keyframes ashake{0%,100%{transform:translateX(0)}15%{transform:translateX(-7px)}30%{transform:translateX(7px)}50%{transform:translateX(-5px)}70%{transform:translateX(5px)}85%{transform:translateX(-2px)}}
         .sentence-placeholder{color:var(--sent-bd);font-weight:600;font-size:14px;pointer-events:none;display:flex;align-items:center;gap:7px;opacity:.7}
-        .insert-bar{width:4px;height:40px;background:var(--accent2);border-radius:3px;animation:ibp .7s ease-in-out infinite;flex-shrink:0}
-        @keyframes ibp{0%,100%{opacity:.4;transform:scaleY(.75)}50%{opacity:1;transform:scaleY(1)}}
-
-        /* ===== 2 PLAYER ===== */
         .players-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0 16px;align-items:start;margin-bottom:14px}
         .player-panel{position:relative;border-radius:22px;border:3px solid var(--border);padding:14px 16px 18px;background:var(--card);box-shadow:0 4px 16px rgba(0,0,0,.06);transition:box-shadow .4s,border-color .4s;width:100%;min-width:0;box-sizing:border-box;overflow:hidden}
         .player-panel.winner{border-color:#FFD700;box-shadow:0 0 35px rgba(255,215,0,.35),0 4px 16px rgba(0,0,0,.06)}
@@ -140,17 +161,16 @@
         .tp-bank{height:175px}
         .player-check-wrap{text-align:center;margin-bottom:6px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
         .player-feedback{text-align:center;min-height:40px}
-        .lock-overlay{display:none;position:absolute;inset:0;background:rgba(255,255,255,.65);border-radius:20px;z-index:50;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:16px;color:var(--muted);gap:8px;pointer-events:none;flex-direction:column}
+        .lock-overlay{display:none;position:absolute;inset:0;background:rgba(255,255,255,.75);border-radius:20px;z-index:50;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:16px;color:var(--muted);gap:8px;pointer-events:none;flex-direction:column;text-align:center;padding:20px}
         .lock-overlay.show{display:flex;pointer-events:auto}
         .lock-overlay i{font-size:28px;margin-bottom:4px}
         .round-banner{text-align:center;padding:12px 20px;border-radius:14px;font-family:'Fredoka One',cursive;font-size:20px;display:none;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;animation:rbdrop .5s ease-out}
         .round-banner.show{display:flex}
         .round-banner.p1-win{background:linear-gradient(135deg,#FFE0E0,#FFB3BA);color:var(--p1dark);border:2px solid var(--p1)}
         .round-banner.p2-win{background:linear-gradient(135deg,#D4F5F0,#B2EBF2);color:var(--p2dark);border:2px solid var(--p2)}
+        .round-banner.both-win{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);color:#2E7D32;border:2px solid var(--success)}
         .round-banner i{font-size:22px}
         @keyframes rbdrop{0%{transform:translateY(-20px);opacity:0}100%{transform:translateY(0);opacity:1}}
-
-        /* ===== CONTROLS ===== */
         .controls,.tp-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
         .btn{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:11px 24px;border:none;border-radius:14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .2s;box-shadow:0 4px 14px rgba(0,0,0,.1);outline:none}
         .btn:hover{transform:translateY(-2px);box-shadow:0 7px 20px rgba(0,0,0,.14)}
@@ -158,16 +178,12 @@
         .btn:focus-visible{box-shadow:0 0 0 3px rgba(78,205,196,.5),0 4px 14px rgba(0,0,0,.1)}
         .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:0 2px 8px rgba(0,0,0,.08)!important}
         .btn-check{background:linear-gradient(135deg,#6BCB77,#4CAF50);color:#fff}
-        .btn-reset{background:linear-gradient(135deg,#FFB74D,#FFA726);color:#fff}
         .btn-retry{background:linear-gradient(135deg,#FF8A65,#E64A19);color:#fff}
         .btn-next{background:linear-gradient(135deg,#64B5F6,#42A5F5);color:#fff}
         .btn-generate{background:linear-gradient(135deg,#AB47BC,#8E24AA);color:#fff}
         .btn-again{background:linear-gradient(135deg,#FF9AA2,#FF6B6B);color:#fff;font-size:16px;padding:13px 32px}
         .btn-menu{background:linear-gradient(135deg,#B0BEC5,#90A4AE);color:#fff;font-size:15px;padding:11px 24px}
         .btn-small{font-size:13px;padding:8px 16px}
-        .btn-back-main{background:linear-gradient(135deg,#FF9AA2,#FF6B6B);color:#fff;font-size:13px;padding:8px 16px}
-
-        /* ===== FEEDBACK ===== */
         .feedback-zone{text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px}
         .fb-msg{padding:12px 22px;border-radius:14px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:9px;animation:fbin .35s ease-out;box-shadow:0 4px 16px rgba(0,0,0,.07)}
         @keyframes fbin{0%{transform:translateY(12px) scale(.94);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
@@ -175,8 +191,6 @@
         .fb-wrong{background:linear-gradient(135deg,#FFEBEE,#FFCDD2);color:#C62828;border:2px solid #EF9A9A}
         .fb-hint{font-size:13px;color:var(--muted);font-weight:600;animation:fbin .4s ease-out .1s both}
         .fb-hint span{color:var(--fg);font-weight:800}
-
-        /* ===== END SCREEN ===== */
         .end-screen{text-align:center;padding:50px 20px;animation:fbin .5s ease-out}
         .end-title{font-family:'Fredoka One',cursive;font-size:36px;margin-bottom:8px}
         .end-title.grad{background:linear-gradient(135deg,#FF6B6B,#FFB74D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -193,16 +207,20 @@
         .champ-vs{font-family:'Fredoka One',cursive;font-size:22px;color:var(--muted)}
         .champ-card.p1-card .champ-num{color:var(--p1dark)}
         .champ-card.p2-card .champ-num{color:var(--p2dark)}
-
-        /* ===== FOOTER ===== */
         .global-footer{text-align:center;padding:14px;font-size:12px;color:var(--muted);font-weight:600;position:relative;z-index:1;margin-top:auto}
         .global-footer i{color:var(--accent)}
         .global-footer span{font-weight:800;color:var(--fg)}
 
-        /* ===== RESPONSIVE ===== */
         @media(max-width:900px){.players-grid{grid-template-columns:1fr;gap:14px}.vs-divider{padding:4px 0}.vs-divider span{width:40px;height:40px;font-size:13px}.player-panel{max-width:100%;margin:0 auto}.tp-bank{height:200px}}
-        @media(max-width:768px){.game-container{padding:12px}.header{padding:14px 18px;border-radius:18px}.title{font-size:20px}.stat-badge{padding:5px 11px;font-size:12px}.word-bank{height:190px}.word-card{padding:8px 16px;font-size:14px;border-radius:12px}.word-card.punct{font-size:18px;padding:8px 12px}.sentence-area,.tp-sentence{padding:12px 14px;min-height:66px;gap:8px 10px}.word-slot{min-width:55px;min-height:42px;padding:3px 5px}.word-slot .word-card.placed{font-size:14px;padding:4px 10px;min-height:36px}.btn{padding:9px 18px;font-size:13px;border-radius:12px}.mode-title{font-size:32px}.mode-card{width:240px;padding:28px 20px 24px}.mode-card i.icon{font-size:36px}.mode-name{font-size:19px}.dashboard-content{padding:28px 20px}}
-        @media(max-width:480px){.title{font-size:17px;gap:5px}.star-icon{font-size:14px}.word-bank{height:165px}.word-card{padding:6px 12px;font-size:13px;border-radius:10px;max-width:85%}.word-card.punct{font-size:16px;padding:6px 10px}.header-stats{gap:6px}.stat-badge{padding:4px 8px;font-size:11px;gap:4px}.score-value{font-size:15px}.controls,.tp-controls{gap:7px}.btn{padding:8px 14px;font-size:12px;gap:4px}.sentence-area,.tp-sentence{padding:10px 10px;min-height:56px;gap:6px 8px}.word-slot{min-width:45px;min-height:36px;padding:2px 4px;border-radius:10px}.word-slot .word-card.placed{font-size:12px;padding:3px 8px;min-height:30px;border-radius:8px}.word-slot .slot-number{font-size:8px;top:-8px}.mode-title{font-size:26px}.mode-cards{gap:14px}.mode-card{width:100%;max-width:280px}.dashboard-content{padding:20px 16px}.dashboard-title{font-size:22px}.tense-indicator{font-size:12px;padding:6px 14px}}
+        @media(max-width:768px){.game-container{padding:12px}.header{padding:14px 18px;border-radius:18px}.title{font-size:20px}.stat-badge{padding:5px 11px;font-size:12px}.word-bank{height:190px}.word-card{padding:8px 16px;font-size:14px;border-radius:12px}.word-card.punct{font-size:18px;padding:8px 12px}.sentence-area,.tp-sentence{padding:12px 14px;min-height:66px;gap:8px 10px}.word-slot{min-width:55px;min-height:42px;padding:3px 5px}.word-slot .word-card.placed{font-size:14px;padding:4px 10px;min-height:36px}.btn{padding:9px 18px;font-size:13px;border-radius:12px}.dashboard-content{padding:28px 20px}
+            #modeSelect .mode-cards{flex-direction:column;padding:10px;width:90%;gap:10px}
+            #modeSelect .mode-card{width:100%;padding:12px;flex-direction:row;justify-content:flex-start}
+            #modeSelect .mode-card i{font-size:24px;margin-bottom:0;margin-right:10px}
+            #modeSelect .mode-name{font-size:18px}
+            #modeSelect .mode-desc{display:none}
+            #modeSelect .dashboard-btn{width:90%}
+        }
+        @media(max-width:480px){.title{font-size:17px;gap:5px}.star-icon{font-size:14px}.word-bank{height:165px}.word-card{padding:6px 12px;font-size:13px;border-radius:10px;max-width:85%}.word-card.punct{font-size:16px;padding:6px 10px}.header-stats{gap:6px}.stat-badge{padding:4px 8px;font-size:11px;gap:4px}.score-value{font-size:15px}.controls,.tp-controls{gap:7px}.btn{padding:8px 14px;font-size:12px;gap:4px}.sentence-area,.tp-sentence{padding:10px 10px;min-height:56px;gap:6px 8px}.word-slot{min-width:45px;min-height:36px;padding:2px 4px;border-radius:10px}.word-slot .word-card.placed{font-size:12px;padding:3px 8px;min-height:30px;border-radius:8px}.word-slot .slot-number{font-size:8px;top:-8px}.dashboard-content{padding:20px 16px}.dashboard-title{font-size:22px}.menu-btn{padding:0 8px;font-size:12px;height:32px}}
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
     </style>
 </head>
@@ -212,25 +230,28 @@
     <div class="bg-blob bg-blob-3"></div>
     <div class="confetti-layer" id="confettiLayer"></div>
 
-    <div class="game-container">
-        <!-- MODE SELECT -->
+    <div class="game-container" id="mainContainer">
+        <!-- MODE SELECT (TAMPILAN BARU) -->
         <div id="modeSelect" class="screen active">
             <div class="mode-select">
-                <div class="mode-title">Arrange the Sentence</div>
-                <p class="mode-sub">AI-Powered Learning with Groq</p>
+                <!-- Elemen ini disembunyikan lewat CSS karena gambar sudah memiliki judul -->
+                <div class="mode-title">Tenses Go, Race!</div>
+                <p class="mode-sub">AI-Powered Learning</p>
                 <div class="tense-indicator" id="tenseIndicator"><i class="fas fa-clock"></i> <span id="tenseIndicatorText">Simple Present Tense</span></div>
+                
                 <div class="mode-cards">
                     <button class="mode-card mode-solo" id="btnSolo">
                         <i class="fas fa-user-graduate icon"></i>
-                        <span class="mode-name">Solo Player</span>
-                        <span class="mode-desc">Practice at your own pace</span>
+                        <span class="mode-name">Solo Race</span>
+                        <span class="mode-desc">Challenge Yourself!</span>
                     </button>
                     <button class="mode-card mode-race" id="btnRace">
                         <i class="fas fa-bolt icon"></i>
-                        <span class="mode-name">2 Player Race</span>
-                        <span class="mode-desc">Compete with a friend!</span>
+                        <span class="mode-name">2 Players</span>
+                        <span class="mode-desc">Race Together!</span>
                     </button>
                 </div>
+                
                 <button class="dashboard-btn" id="openDashboard"><i class="fas fa-chalkboard-teacher"></i> Dashboard Guru</button>
             </div>
         </div>
@@ -238,10 +259,10 @@
         <!-- SINGLE PLAYER -->
         <div id="singleGame" class="screen">
             <header class="header">
-                <div class="title"><i class="fas fa-star star-icon"></i> Arrange the Sentence <i class="fas fa-star star-icon"></i></div>
+                <div class="title"><i class="fas fa-star star-icon"></i> Tenses Go, Race! <i class="fas fa-star star-icon"></i></div>
                 <div class="header-stats">
-                    <button class="menu-btn" id="spMenu" title="Menu"><i class="fas fa-home"></i></button>
-                    <button class="menu-btn btn-back-main" id="spBackMain" title="Back to Main"><i class="fas fa-arrow-left"></i></button>
+                    <button class="menu-btn" id="spMenu" title="Menu Utama"><i class="fas fa-home"></i> Home</button>
+                    <button class="menu-btn" id="spBackMain" title="Kembali"><i class="fas fa-arrow-left"></i> Back</button>
                     <div class="stat-badge"><i class="fas fa-book-open"></i><span id="spQ">1/10</span></div>
                     <div class="stat-badge"><i class="fas fa-trophy"></i>Score: <span class="score-value" id="spScore">0</span></div>
                     <span class="level-badge level-easy" id="spLevel">Easy</span>
@@ -260,7 +281,6 @@
             <div class="controls">
                 <button class="btn btn-check" id="spCheck"><i class="fas fa-check-circle"></i> Check</button>
                 <button class="btn btn-retry" id="spRetry"><i class="fas fa-undo"></i> Retry</button>
-                <button class="btn btn-reset" id="spReset"><i class="fas fa-redo-alt"></i> Reset</button>
                 <button class="btn btn-next" id="spNext"><i class="fas fa-arrow-right"></i> Next</button>
             </div>
             <div class="feedback-zone" id="spFeedback"></div>
@@ -282,10 +302,10 @@
         <!-- TWO PLAYER -->
         <div id="twoPlayerGame" class="screen">
             <header class="header tp-header">
-                <div class="title"><i class="fas fa-star star-icon"></i> Sentence Race <i class="fas fa-star star-icon"></i></div>
+                <div class="title"><i class="fas fa-star star-icon"></i> Tenses Race! <i class="fas fa-star star-icon"></i></div>
                 <div class="header-stats">
-                    <button class="menu-btn" id="tpMenu" title="Menu"><i class="fas fa-home"></i></button>
-                    <button class="menu-btn btn-back-main" id="tpBackMain" title="Back to Main"><i class="fas fa-arrow-left"></i></button>
+                    <button class="menu-btn" id="tpMenu" title="Menu Utama"><i class="fas fa-home"></i> Home</button>
+                    <button class="menu-btn" id="tpBackMain" title="Kembali"><i class="fas fa-arrow-left"></i> Back</button>
                     <div class="stat-badge"><i class="fas fa-book-open"></i><span id="tpRound">1/10</span></div>
                     <div class="stat-badge p1-b"><i class="fas fa-trophy"></i>P1: <span class="score-value" id="tpP1S">0</span></div>
                     <div class="stat-badge p2-b"><i class="fas fa-trophy"></i>P2: <span class="score-value" id="tpP2S">0</span></div>
@@ -309,7 +329,6 @@
                     <div class="player-check-wrap">
                         <button class="btn btn-check" id="p1Check"><i class="fas fa-check-circle"></i> Check</button>
                         <button class="btn btn-retry" id="p1Retry"><i class="fas fa-undo"></i> Retry</button>
-                        <button class="btn btn-reset" id="p1Reset"><i class="fas fa-redo-alt"></i> Reset</button>
                     </div>
                     <div class="player-feedback" id="p1Feedback"></div>
                     <div class="lock-overlay" id="p1Overlay"><i class="fas fa-hourglass-half"></i><span></span></div>
@@ -326,15 +345,13 @@
                     <div class="player-check-wrap">
                         <button class="btn btn-check" id="p2Check"><i class="fas fa-check-circle"></i> Check</button>
                         <button class="btn btn-retry" id="p2Retry"><i class="fas fa-undo"></i> Retry</button>
-                        <button class="btn btn-reset" id="p2Reset"><i class="fas fa-redo-alt"></i> Reset</button>
                     </div>
                     <div class="player-feedback" id="p2Feedback"></div>
                     <div class="lock-overlay" id="p2Overlay"><i class="fas fa-hourglass-half"></i><span></span></div>
                 </div>
             </div>
             <div class="tp-controls">
-                <button class="btn btn-reset" id="tpReset"><i class="fas fa-redo-alt"></i> Reset Round</button>
-                <button class="btn btn-next" id="tpNext" style="display:none"><i class="fas fa-arrow-right"></i> Next Round</button>
+                <button class="btn btn-next" id="tpNext"><i class="fas fa-arrow-right"></i> Next Round</button>
             </div>
         </div>
 
@@ -381,10 +398,22 @@
             </div>
 
             <div id="dashboardSection" style="display:none;">
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Fitur AI siap digunakan!</strong><br>
+                        Tempel URL Edge Function Supabase Anda di bawah ini (cukup sekali).
+                        <div id="proxyStatus" style="margin-top:8px;"><span class="proxy-status proxy-ok"><i class="fas fa-circle"></i> Checking...</span></div>
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label><i class="fas fa-key"></i> Groq API Key</label>
-                    <input type="password" id="apiKeyInput" placeholder="Masukkan Groq API Key">
-                    <div class="help-text">Dapatkan API key dari <a href="https://console.groq.com" target="_blank">console.groq.com</a></div>
+                    <label><i class="fas fa-link"></i> URL Supabase Edge Function</label>
+                    <input type="text" id="proxyUrlInput" placeholder="https://[PROJECT_REF].supabase.co/functions/v1/generate">
+                    <div class="help-text">
+                        Dari dashboard Supabase: Edge Functions &rarr; generate &rarr; copy URL.
+                        Kosongkan jika ingin mode statis (tanpa AI).
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -436,14 +465,13 @@
                 <hr style="margin:20px 0;border-color:var(--border)">
 
                 <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                    <button class="btn-secondary" id="resetDefaultBtn"><i class="fas fa-undo"></i> Reset ke Default</button>
                     <button class="btn-secondary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="global-footer">
+    <footer class="global-footer" id="mainFooter">
         <i class="fas fa-heart"></i> Developed by <span>Darmawati, S.Pd., M.Pd.</span> &mdash; SMPN 1 ANGGERAJA
     </footer>
 
@@ -451,7 +479,19 @@
     (function(){
         'use strict';
 
-        /* ===== TENSE LABELS ===== */
+        var APP_SECRET = 'KUNCI_RAHASIA_ANDA_123'; // Ganti dengan kata sandi buatan Anda
+
+        function getProxyUrl(){
+            return localStorage.getItem('supabase_proxy_url') || '';
+        }
+        function setProxyUrl(url){
+            localStorage.setItem('supabase_proxy_url', url);
+        }
+        function isProxyConfigured(){
+            var url = getProxyUrl();
+            return url && url.length > 10;
+        }
+
         var TENSE_LABELS = {
             simple_present: 'Simple Present Tense',
             simple_past: 'Simple Past Tense',
@@ -470,7 +510,6 @@
             future_continuous: 'Fut. Continuous'
         };
 
-        /* ===== DEFAULT SENTENCES PER TENSE ===== */
         var ALL_SENTENCES = {
             simple_present: [
                 {text:"The cat sleeps on the mat",type:"affirmative"},
@@ -664,12 +703,10 @@
             ]
         };
 
-        /* ===== STATE ===== */
         var currentTense = localStorage.getItem('selected_tense') || 'simple_present';
         var currentLevel = localStorage.getItem('selected_level') || 'medium';
         var currentType = localStorage.getItem('selected_type') || 'all';
         var questionCountSetting = parseInt(localStorage.getItem('selected_count')) || 10;
-        var GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
 
         function getSentences(){
             return JSON.parse(JSON.stringify(ALL_SENTENCES[currentTense] || ALL_SENTENCES.simple_present));
@@ -683,7 +720,6 @@
         }
         updateTenseIndicator();
 
-        /* ===== GROQ API ===== */
         var TENSE_PROMPT_MAP = {
             simple_present: 'Simple Present Tense. Untuk negative gunakan "do not" atau "does not". Untuk interrogative gunakan "Do" atau "Does" di awal kalimat.',
             simple_past: 'Simple Past Tense. Gunakan verb bentuk kedua (V2). Untuk negative gunakan "did not" + V1. Untuk interrogative gunakan "Did" di awal kalimat.',
@@ -693,12 +729,37 @@
             future_continuous: 'Future Continuous Tense. Gunakan "will be + V-ing". Untuk negative gunakan "will not be + V-ing". Untuk interrogative gunakan "Will" di awal kalimat.'
         };
 
-        async function generateQuestionsWithGroq(level, type, count, tense){
-            if(!GROQ_API_KEY) throw new Error('API Key tidak ditemukan. Silakan masukkan Groq API Key di Dashboard Guru.');
-            
-            // Validate API key format (basic check)
-            if(GROQ_API_KEY.length < 10) throw new Error('API Key tidak valid. Pastikan Anda memasukkan API Key yang benar dari console.groq.com');
-            
+        async function checkProxyStatus(){
+            var statusEl = document.getElementById('proxyStatus');
+            if(!statusEl) return;
+            if(!isProxyConfigured()){
+                statusEl.innerHTML = '<span class="proxy-status proxy-off"><i class="fas fa-exclamation-circle"></i> Mode Statis (URL belum diisi)</span>';
+                return;
+            }
+            try {
+                var resp = await fetch(getProxyUrl(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-app-secret': APP_SECRET
+                    },
+                    body: JSON.stringify({ping: true})
+                });
+                if(resp.ok){
+                    statusEl.innerHTML = '<span class="proxy-status proxy-ok"><i class="fas fa-check-circle"></i> Supabase AI Aktif</span>';
+                } else {
+                    statusEl.innerHTML = '<span class="proxy-status proxy-off"><i class="fas fa-exclamation-triangle"></i> Supabase tidak merespon (' + resp.status + ')</span>';
+                }
+            } catch(e){
+                statusEl.innerHTML = '<span class="proxy-status proxy-off"><i class="fas fa-exclamation-triangle"></i> Tidak dapat terhubung ke Supabase</span>';
+            }
+        }
+
+        async function generateQuestionsWithProxy(level, type, count, tense){
+            if(!isProxyConfigured()){
+                throw new Error('URL Supabase belum diisi. Buka Dashboard Guru dan tempel URL Edge Function.');
+            }
+
             var typeFilter = type === 'all' ? 'semua tipe (affirmative, negative, interrogative)' : type;
             var levelDesc = {easy:'kalimat pendek dengan 3-4 kata',medium:'kalimat sedang dengan 5-6 kata',hard:'kalimat panjang dengan 7-8 kata'}[level] || 'kalimat sedang dengan 5-6 kata';
             var tenseRule = TENSE_PROMPT_MAP[tense] || TENSE_PROMPT_MAP.simple_present;
@@ -716,51 +777,35 @@
                 'Contoh output: [{"text":"She reads a book every day","type":"affirmative"},{"text":"They do not eat meat","type":"negative"}]';
 
             try {
-                var response = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+                var response = await fetch(getProxyUrl(), {
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
-                        'Authorization':'Bearer ' + GROQ_API_KEY
+                        'x-app-secret': APP_SECRET
                     },
-                    body:JSON.stringify({
-                        model:'llama-3.3-70b-versatile',
-                        messages:[
-                            {role:'system',content:'You are an English teacher creating sentence arrangement exercises. Output only valid JSON.'},
-                            {role:'user',content:prompt}
-                        ],
-                        temperature:0.7,
-                        max_tokens:2000
-                    })
+                    body:JSON.stringify({prompt: prompt, tense: tense, level: level, count: count})
                 });
-                
+
                 if(!response.ok){
                     var errData = await response.json().catch(function(){ return {}; });
-                    var errorMsg = errData.error?.message || response.statusText || 'Unknown error';
-                    throw new Error('API Error: ' + errorMsg + ' (Status: ' + response.status + ')');
+                    var errorMsg = (errData.error && errData.error.message) || errData.message || response.statusText || 'Unknown error';
+                    throw new Error('Supabase AI: ' + errorMsg + ' (Status: ' + response.status + ')');
                 }
-                
+
                 var data = await response.json();
-                if(!data.choices || !data.choices[0] || !data.choices[0].message) {
-                    throw new Error('Respons dari API tidak valid. Silakan coba lagi.');
+                var questions = data.questions || data;
+                if(!Array.isArray(questions) || questions.length === 0){
+                    throw new Error('Supabase AI tidak mengembalikan soal. Coba lagi.');
                 }
-                
-                var content = data.choices[0].message.content;
-                var jsonMatch = content.match(/\[[\s\S]*\]/);
-                if(!jsonMatch) throw new Error('Respons dari AI tidak valid. Silakan coba lagi.');
-                
-                var questions = JSON.parse(jsonMatch[0]);
-                if(!Array.isArray(questions) || questions.length === 0) throw new Error('Tidak ada soal yang dihasilkan.');
-                
-                return questions.filter(function(q){ return q.text && q.type; }).slice(0, count);
+                return questions.filter(function(q){ return q && q.text && q.type; }).slice(0, count);
             } catch(err) {
-                // Re-throw with more specific message
-                if(err.message.includes('API Key')) throw err;
-                if(err.message.includes('fetch')) throw new Error('Koneksi internet bermasalah. Periksa koneksi Anda.');
+                if(err.name === 'TypeError' || err.message.indexOf('fetch') !== -1){
+                    throw new Error('Tidak dapat terhubung ke Supabase. Pastikan koneksi internet aktif dan URL sudah benar.');
+                }
                 throw err;
             }
         }
 
-        /* ===== AUDIO ===== */
         var audioCtx=null;
         function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;}
         function playClap(){
@@ -788,7 +833,6 @@
             osc.connect(oF);oF.connect(oG);oG.connect(ctx.destination);osc.start(now);osc.stop(now+dur);
         }
 
-        /* ===== UTILITY ===== */
         var PALETTE=[
             {bg:'#FFB3BA',bd:'#FF9AA2',tx:'#7A2E2E'},{bg:'#BAFFC9',bd:'#81C784',tx:'#1B5E20'},
             {bg:'#BAE1FF',bd:'#64B5F6',tx:'#0D47A1'},{bg:'#FFFFBA',bd:'#FFD54F',tx:'#5D4037'},
@@ -853,20 +897,15 @@
             el.textContent=TENSE_SHORT[tense]||'Simple Present';
         }
 
-        /* ===== DRAG AND DROP ENGINE ===== */
         function initDragDrop(bankEl,sentenceEl,emptyEl,onAllPlaced){
-            var cards=[],slots=[],dragCard=null,startX=0,startY=0,startLeft=0,startTop=0,origSlot=null;
+            var dragCard=null,startX=0,startY=0,startLeft=0,startTop=0,origSlot=null;
             var shuffleTimer = null;
+            var initialShuffleTimer = null;
+            var controller = new AbortController();
+            var signal = controller.signal;
 
             function refreshSlots(){
-                slots=[];
-                sentenceEl.querySelectorAll('.word-slot').forEach(function(s){slots.push(s);});
-            }
-
-            function refreshCards(){
-                cards=[];
-                bankEl.querySelectorAll('.word-card').forEach(function(c){cards.push(c);});
-                sentenceEl.querySelectorAll('.word-card.placed').forEach(function(c){cards.push(c);});
+                return Array.from(sentenceEl.querySelectorAll('.word-slot'));
             }
 
             function checkEmpty(){
@@ -883,17 +922,16 @@
             }
 
             function nearestSlot(px,py){
-                refreshSlots();
+                var slots = refreshSlots();
                 var best=null,bestDist=Infinity;
                 for(var i=0;i<slots.length;i++){
                     var s=slots[i];
                     if(s.querySelector('.word-card.placed'))continue;
                     var sr=s.getBoundingClientRect();
-                    // PERBAIKAN: Perbesar area deteksi slot
                     var scx=sr.left+sr.width/2,scy=sr.top+sr.height/2;
                     var d=Math.hypot(px-scx,py-scy);
-                    // PERBAIKAN: Tingkatkan jarak deteksi dari 120px menjadi 200px
-                    if(d<bestDist&&d<200){bestDist=d;best=s;}
+                    var maxDist = Math.max(sr.width, sr.height) * 1.5;
+                    if(d<bestDist && d<maxDist){bestDist=d;best=s;}
                 }
                 return best;
             }
@@ -903,118 +941,76 @@
                 card.classList.remove('dragging');
                 card.style.position='static';
                 card.style.left='';card.style.top='';
-                // Hapus animasi saat ditempatkan di slot
-                card.style.transition = 'transform .15s,box-shadow .15s';
+                card.style.transition='transform .15s,box-shadow .15s';
                 slot.appendChild(card);
                 slot.classList.remove('highlight');
                 checkEmpty();
-                // Mulai ulang animasi shuffle jika ada kata di bank
                 startShuffleAnimation();
             }
 
             function returnToBank(card,slot){
                 card.classList.remove('placed','dragging');
                 card.style.position='absolute';
-                // Tambahkan animasi kembali ke bank
-                card.style.transition = 'left 0.8s ease-in-out, top 0.8s ease-in-out';
+                card.style.transition='left 0.8s ease-in-out, top 0.8s ease-in-out';
                 bankEl.appendChild(card);
-                // Posisikan di bank dengan posisi acak
                 var bankRect = bankEl.getBoundingClientRect();
-                var x = 20 + Math.random() * (bankEl.offsetWidth - card.offsetWidth - 40);
-                var y = 20 + Math.random() * (bankEl.offsetHeight - card.offsetHeight - 40);
+                var x = 20 + Math.random() * Math.max(1, (bankEl.offsetWidth - card.offsetWidth - 40));
+                var y = 20 + Math.random() * Math.max(1, (bankEl.offsetHeight - card.offsetHeight - 40));
                 posInBank(card, bankRect.left + x, bankRect.top + y);
                 if(slot)slot.classList.remove('highlight');
                 checkEmpty();
-                // Mulai ulang animasi shuffle
                 startShuffleAnimation();
             }
 
-            // Fungsi untuk menggerakkan kata secara acak di word bank
             function startShuffleAnimation() {
-                if (shuffleTimer) {
-                    clearInterval(shuffleTimer);
-                    shuffleTimer = null;
-                }
-                
-                // Hanya jalankan jika ada kata di bank
+                stopShuffle();
                 var bankCards = bankEl.querySelectorAll('.word-card');
                 if (bankCards.length === 0) return;
-                
-                // Fungsi untuk menggerakkan satu kata
                 function shuffleSingleCard(card) {
                     if (!card || card.classList.contains('dragging') || card.classList.contains('placed')) return;
-                    
-                    var bankRect = bankEl.getBoundingClientRect();
-                    var maxX = bankEl.offsetWidth - card.offsetWidth - 8;
-                    var maxY = bankEl.offsetHeight - card.offsetHeight - 8;
-                    var newX = 4 + Math.random() * maxX;
-                    var newY = 4 + Math.random() * maxY;
-                    
-                    // Animasi transisi yang halus
+                    var maxX = Math.max(1, bankEl.offsetWidth - card.offsetWidth - 8);
+                    var maxY = Math.max(1, bankEl.offsetHeight - card.offsetHeight - 8);
                     card.style.transition = 'left 2s ease-in-out, top 2s ease-in-out';
-                    card.style.left = newX + 'px';
-                    card.style.top = newY + 'px';
+                    card.style.left = (4 + Math.random() * maxX) + 'px';
+                    card.style.top = (4 + Math.random() * maxY) + 'px';
                 }
-                
-                // Gerakkan semua kata di bank secara acak
                 function shuffleAllCards() {
                     var currentCards = bankEl.querySelectorAll('.word-card');
-                    if (currentCards.length === 0) {
-                        if (shuffleTimer) {
-                            clearInterval(shuffleTimer);
-                            shuffleTimer = null;
-                        }
-                        return;
-                    }
-                    
-                    // Pilih beberapa kata untuk digerakkan secara acak
+                    if (currentCards.length === 0) { stopShuffle(); return; }
                     var cardsToMove = [];
                     for (var i = 0; i < currentCards.length; i++) {
-                        if (!currentCards[i].classList.contains('dragging') && 
-                            !currentCards[i].classList.contains('placed')) {
+                        if (!currentCards[i].classList.contains('dragging') && !currentCards[i].classList.contains('placed')) {
                             cardsToMove.push(currentCards[i]);
                         }
                     }
-                    
-                    // Jika tidak ada kata yang bisa digerakkan, coba lagi nanti
                     if (cardsToMove.length === 0) return;
-                    
-                    // Pilih subset acak untuk digerakkan
                     var numToMove = Math.min(2, cardsToMove.length);
-                    var shuffledIndices = shuffle(Array.from({length: cardsToMove.length}, (_, i) => i));
-                    for (var j = 0; j < numToMove && j < shuffledIndices.length; j++) {
-                        shuffleSingleCard(cardsToMove[shuffledIndices[j]]);
+                    var idxs = shuffle(Array.from({length: cardsToMove.length}, function(_, i){ return i; }));
+                    for (var j = 0; j < numToMove && j < idxs.length; j++) {
+                        shuffleSingleCard(cardsToMove[idxs[j]]);
                     }
                 }
-                
-                // Jalankan shuffle setiap 3-5 detik
                 shuffleTimer = setInterval(shuffleAllCards, 3000 + Math.random() * 2000);
-                
-                // Jalankan shuffle pertama setelah 500ms
-                setTimeout(shuffleAllCards, 500);
+                initialShuffleTimer = setTimeout(shuffleAllCards, 500);
+            }
+
+            function stopShuffle() {
+                if (shuffleTimer) { clearInterval(shuffleTimer); shuffleTimer = null; }
+                if (initialShuffleTimer) { clearTimeout(initialShuffleTimer); initialShuffleTimer = null; }
             }
 
             function onStart(e){
                 var card=e.target.closest('.word-card');
                 if(!card||card.classList.contains('dragging'))return;
                 e.preventDefault();
-                
-                // Hentikan animasi shuffle saat drag dimulai
-                if (shuffleTimer) {
-                    clearInterval(shuffleTimer);
-                    shuffleTimer = null;
-                }
-                
+                stopShuffle();
                 dragCard=card;
                 var pt=e.touches?e.touches[0]:e;
                 startX=pt.clientX;startY=pt.clientY;
                 var cr=card.getBoundingClientRect();
                 startLeft=cr.left;startTop=cr.top;
                 origSlot=card.closest('.word-slot');
-
-                // Matikan transisi saat drag
                 card.style.transition = 'none';
-
                 if(card.classList.contains('placed')){
                     card.classList.remove('placed');
                     card.style.position='absolute';
@@ -1023,11 +1019,10 @@
                     card.style.top=startTop+'px';
                     card.style.zIndex='10000';
                 } else {
-                    startLeft=parseFloat(card.style.left)||cr.left-bankEl.getBoundingClientRect().left;
-                    startTop=parseFloat(card.style.top)||cr.top-bankEl.getBoundingClientRect().top;
+                    startLeft=parseFloat(card.style.left)||0;
+                    startTop=parseFloat(card.style.top)||0;
                 }
                 card.classList.add('dragging');
-                refreshSlots();
             }
 
             function onMove(e){
@@ -1037,7 +1032,7 @@
                 var dx=pt.clientX-startX,dy=pt.clientY-startY;
                 dragCard.style.left=(startLeft+dx)+'px';
                 dragCard.style.top=(startTop+dy)+'px';
-                slots.forEach(function(s){s.classList.remove('highlight');});
+                refreshSlots().forEach(function(s){s.classList.remove('highlight');});
                 var ns=nearestSlot(pt.clientX,pt.clientY);
                 if(ns)ns.classList.add('highlight');
             }
@@ -1048,50 +1043,38 @@
                 var cr=dragCard.getBoundingClientRect();
                 var cx=cr.left+cr.width/2,cy=cr.top+cr.height/2;
                 var slot=nearestSlot(cx,cy);
-                if(slot){placeInSlot(dragCard,slot);}
-                else{
-                    dragCard.classList.remove('dragging');
-                    if(origSlot){
-                        placeInSlot(dragCard,origSlot);
-                    } else {
-                        returnToBank(dragCard,null);
-                    }
+                var card = dragCard;
+                if(slot){ placeInSlot(card, slot); }
+                else {
+                    card.classList.remove('dragging');
+                    if(origSlot){ placeInSlot(card, origSlot); }
+                    else { returnToBank(card, null); }
                 }
                 dragCard=null;origSlot=null;
-                slots.forEach(function(s){s.classList.remove('highlight');});
-                
-                // Mulai ulang animasi shuffle
+                refreshSlots().forEach(function(s){s.classList.remove('highlight');});
+                setTimeout(function(){ card.style.transition = ''; }, 100);
                 startShuffleAnimation();
             }
 
-            bankEl.addEventListener('mousedown',onStart);
-            bankEl.addEventListener('touchstart',onStart,{passive:false});
-            document.addEventListener('mousemove',onMove);
-            document.addEventListener('touchmove',onMove,{passive:false});
-            document.addEventListener('mouseup',onEnd);
-            document.addEventListener('touchend',onEnd);
+            bankEl.addEventListener('mousedown', onStart, {signal: signal});
+            bankEl.addEventListener('touchstart', onStart, {passive: false, signal: signal});
+            document.addEventListener('mousemove', onMove, {signal: signal});
+            document.addEventListener('touchmove', onMove, {passive: false, signal: signal});
+            document.addEventListener('mouseup', onEnd, {signal: signal});
+            document.addEventListener('touchend', onEnd, {signal: signal});
 
-            /* Klik ganda untuk kembalikan kata dari slot ke bank */
-            sentenceEl.addEventListener('dblclick',function(e){
+            sentenceEl.addEventListener('dblclick', function(e){
                 var card=e.target.closest('.word-card.placed');
                 if(!card)return;
                 var slot=card.closest('.word-slot');
                 if(slot)card.classList.remove('placed');
                 returnToBank(card,slot);
-            });
-
-            // Inisialisasi animasi shuffle
-            setTimeout(startShuffleAnimation, 300);
+            }, {signal: signal});
 
             return{
-                refreshCards:refreshCards,
-                refreshSlots:refreshSlots,
                 checkEmpty:checkEmpty,
                 returnAllToBank:function(){
-                    if (shuffleTimer) {
-                        clearInterval(shuffleTimer);
-                        shuffleTimer = null;
-                    }
+                    stopShuffle();
                     sentenceEl.querySelectorAll('.word-card.placed').forEach(function(c){
                         c.classList.remove('placed');
                         returnToBank(c,null);
@@ -1100,46 +1083,27 @@
                 },
                 posInBank:posInBank,
                 shuffleBank:function(){
-                    if (shuffleTimer) {
-                        clearInterval(shuffleTimer);
-                        shuffleTimer = null;
-                    }
+                    stopShuffle();
                     bankEl.querySelectorAll('.word-card').forEach(function(c){
                         if (!c.classList.contains('placed')) {
                             var bankRect = bankEl.getBoundingClientRect();
-                            var x = 20 + Math.random() * (bankEl.offsetWidth - c.offsetWidth - 40);
-                            var y = 20 + Math.random() * (bankEl.offsetHeight - c.offsetHeight - 40);
+                            var x = 20 + Math.random() * Math.max(1, (bankEl.offsetWidth - c.offsetWidth - 40));
+                            var y = 20 + Math.random() * Math.max(1, (bankEl.offsetHeight - c.offsetHeight - 40));
                             posInBank(c, bankRect.left + x, bankRect.top + y);
                         }
                     });
                     setTimeout(startShuffleAnimation, 300);
                 },
-                stopShuffle: function() {
-                    if (shuffleTimer) {
-                        clearInterval(shuffleTimer);
-                        shuffleTimer = null;
-                    }
-                },
-                startShuffle: startShuffleAnimation
+                stopShuffle: stopShuffle,
+                startShuffle: startShuffleAnimation,
+                destroy: function(){ stopShuffle(); controller.abort(); }
             };
         }
 
-        /* ===== SINGLE PLAYER GAME ===== */
-        var spState = {
-            qIndex: 0,
-            score: 0,
-            answered: false,
-            current: null,
-            engine: null,
-            totalQuestions: 0
-        };
-        var spTotal = 10;
+        var spState = { qIndex: 0, score: 0, answered: false, current: null, engine: null, totalQuestions: 0 };
 
         function spLoadQuestion(){
-            if(spState.qIndex >= spState.totalQuestions || spState.qIndex >= SENTENCES.length){
-                spEndGame();
-                return;
-            }
+            if(spState.qIndex >= spState.totalQuestions || spState.qIndex >= SENTENCES.length){ spEndGame(); return; }
             spState.answered = false;
             var q = SENTENCES[spState.qIndex];
             spState.current = q;
@@ -1183,9 +1147,8 @@
                 card.style.borderColor = pal.bd;
                 card.style.color = pal.tx;
                 card.style.position = 'absolute';
-                // Posisi awal acak
-                var x = 20 + Math.random() * (bank.offsetWidth - 80);
-                var y = 20 + Math.random() * (bank.offsetHeight - 60);
+                var x = 20 + Math.random() * Math.max(1, (bank.offsetWidth - 100));
+                var y = 20 + Math.random() * Math.max(1, (bank.offsetHeight - 60));
                 card.style.left = x + 'px';
                 card.style.top = y + 'px';
                 bank.appendChild(card);
@@ -1193,7 +1156,8 @@
 
             document.getElementById('spFeedback').innerHTML = '';
             document.getElementById('spCheck').disabled = false;
-            document.getElementById('spNext').style.display = 'none';
+            document.getElementById('spNext').style.display = 'inline-flex';
+            document.getElementById('spNext').disabled = false;
             sent.className = 'sentence-area';
 
             if(spState.engine){
@@ -1204,32 +1168,25 @@
             }
         }
 
-        // FUNGSI RETRY: Kembalikan semua kata ke bank tanpa mengubah skor
         function spRetryQuestion(){
             if(spState.engine) {
                 spState.engine.returnAllToBank();
-                // Hapus status jawaban
-                spState.answered = false;
-                document.getElementById('spCheck').disabled = false;
-                document.getElementById('spNext').style.display = 'none';
                 document.getElementById('spSentence').className = 'sentence-area';
                 document.getElementById('spFeedback').innerHTML = '';
-                // Mulai ulang animasi shuffle
-                setTimeout(function(){
-                    if(spState.engine) spState.engine.shuffleBank();
-                }, 300);
+                document.getElementById('spCheck').disabled = false;
+                spState.answered = false;
+                setTimeout(function(){ if(spState.engine) spState.engine.shuffleBank(); }, 300);
             }
         }
 
         function spInitEngine(){
-            if(!spState.engine){
-                spState.engine = initDragDrop(
-                    document.getElementById('spBank'),
-                    document.getElementById('spSentence'),
-                    document.getElementById('spEmpty'),
-                    null
-                );
-            }
+            if(spState.engine){ spState.engine.destroy(); spState.engine = null; }
+            spState.engine = initDragDrop(
+                document.getElementById('spBank'),
+                document.getElementById('spSentence'),
+                document.getElementById('spEmpty'),
+                null
+            );
         }
 
         function spCheckAnswer(){
@@ -1242,7 +1199,6 @@
             var correct = normalize(spState.current.text) === normalize(userAns);
             var fb = document.getElementById('spFeedback');
 
-            // Hentikan animasi shuffle saat jawaban diperiksa
             if(spState.engine) spState.engine.stopShuffle();
 
             if(correct){
@@ -1257,24 +1213,12 @@
                 fb.innerHTML = '<div class="fb-msg fb-wrong"><i class="fas fa-times-circle"></i> Not quite right</div><div class="fb-hint">Correct answer: <span>' + spState.current.text + '</span></div>';
                 playHuhh();
             }
-            document.getElementById('spNext').style.display = 'inline-flex';
         }
 
-        function spNextQuestion(){
-            spState.qIndex++;
-            spLoadQuestion();
-        }
-
-        function spResetQuestion(){
-            if(spState.engine) spState.engine.returnAllToBank();
-            document.getElementById('spSentence').className = 'sentence-area';
-            document.getElementById('spFeedback').innerHTML = '';
-            document.getElementById('spCheck').disabled = false;
-            document.getElementById('spNext').style.display = 'none';
-            spState.answered = false;
-        }
+        function spNextQuestion(){ spState.qIndex++; spLoadQuestion(); }
 
         function spStartGame(){
+            if(spState.engine){ spState.engine.destroy(); spState.engine = null; }
             spState.qIndex = 0;
             spState.score = 0;
             spState.answered = false;
@@ -1282,12 +1226,7 @@
             TOTAL = SENTENCES.length;
             spState.totalQuestions = Math.min(questionCountSetting, TOTAL);
             showScreen('singleGame');
-            
-            // Inisialisasi engine setelah DOM siap
-            setTimeout(function(){
-                spInitEngine();
-                spLoadQuestion();
-            }, 50);
+            setTimeout(function(){ spInitEngine(); spLoadQuestion(); }, 50);
         }
 
         function spEndGame(){
@@ -1303,46 +1242,21 @@
             if(pct >= 70) confetti();
         }
 
-        /* Fungsi kembali ke dashboard utama dari single player */
         function spBackToMain() {
             if(confirm('Apakah Anda yakin ingin kembali ke menu utama? Progress akan hilang.')) {
+                if(spState.engine){ spState.engine.destroy(); spState.engine = null; }
                 showScreen('modeSelect');
-                // Reset state
-                spState.qIndex = 0;
-                spState.score = 0;
-                spState.answered = false;
-                spState.current = null;
-                if(spState.engine) {
-                    spState.engine.stopShuffle();
-                    spState.engine.returnAllToBank();
-                }
+                spState.qIndex = 0; spState.score = 0; spState.answered = false; spState.current = null;
                 document.getElementById('spFeedback').innerHTML = '';
                 document.getElementById('spSentence').className = 'sentence-area';
             }
         }
 
-        /* ===== TWO PLAYER GAME ===== */
-        var tpState = {
-            round: 0,
-            totalRounds: 10,
-            p1Score: 0,
-            p2Score: 0,
-            p1Done: false,
-            p2Done: false,
-            current: null,
-            p1Engine: null,
-            p2Engine: null,
-            roundWinner: null // 'p1' or 'p2'
-        };
+        var tpState = { round: 0, totalRounds: 10, p1Score: 0, p2Score: 0, p1Done: false, p2Done: false, current: null, p1Engine: null, p2Engine: null, roundWinner: null };
 
         function tpLoadRound(){
-            if(tpState.round >= tpState.totalRounds || tpState.round >= SENTENCES.length){
-                tpEndGame();
-                return;
-            }
-            tpState.p1Done = false;
-            tpState.p2Done = false;
-            tpState.roundWinner = null;
+            if(tpState.round >= tpState.totalRounds || tpState.round >= SENTENCES.length){ tpEndGame(); return; }
+            tpState.p1Done = false; tpState.p2Done = false; tpState.roundWinner = null;
             var q = SENTENCES[tpState.round];
             tpState.current = q;
             var words = getWords(q.text);
@@ -1355,8 +1269,7 @@
             setTypeTag(document.getElementById('p1Type'), q.type);
             setTypeTag(document.getElementById('p2Type'), q.type);
 
-            document.getElementById('roundBanner').classList.remove('show', 'p1-win', 'p2-win');
-            document.getElementById('tpNext').style.display = 'none';
+            document.getElementById('roundBanner').classList.remove('show', 'p1-win', 'p2-win', 'both-win');
             document.getElementById('p1Overlay').classList.remove('show');
             document.getElementById('p2Overlay').classList.remove('show');
             document.getElementById('p1Panel').classList.remove('locked', 'winner');
@@ -1397,8 +1310,8 @@
                     card.style.borderColor = pal.bd;
                     card.style.color = pal.tx;
                     card.style.position = 'absolute';
-                    var x = 20 + Math.random() * (bank.offsetWidth - 80);
-                    var y = 20 + Math.random() * (bank.offsetHeight - 60);
+                    var x = 20 + Math.random() * Math.max(1, (bank.offsetWidth - 100));
+                    var y = 20 + Math.random() * Math.max(1, (bank.offsetHeight - 60));
                     card.style.left = x + 'px';
                     card.style.top = y + 'px';
                     bank.appendChild(card);
@@ -1412,25 +1325,19 @@
             }, 50);
         }
 
-        // FUNGSI RETRY untuk 2 player
         function tpRetryPlayer(pid){
             if(pid === 'p1' && tpState.p1Done) return;
             if(pid === 'p2' && tpState.p2Done) return;
-            
             var sent = document.getElementById(pid + 'Sentence');
             var fb = document.getElementById(pid + 'Feedback');
             var engine = pid === 'p1' ? tpState.p1Engine : tpState.p2Engine;
-            
             if(engine) {
                 engine.returnAllToBank();
                 sent.className = 'tp-sentence';
                 fb.innerHTML = '';
                 document.getElementById(pid + 'Check').disabled = false;
                 document.getElementById(pid + 'Panel').classList.remove('locked');
-                // Mulai ulang animasi shuffle
-                setTimeout(function(){
-                    if(engine) engine.shuffleBank();
-                }, 300);
+                setTimeout(function(){ if(engine) engine.shuffleBank(); }, 300);
             }
         }
 
@@ -1443,134 +1350,68 @@
             var userAns = Array.from(placed).map(function(c){ return c.textContent; }).join(' ');
             var correct = normalize(tpState.current.text) === normalize(userAns);
             var fb = document.getElementById(pid + 'Feedback');
-            var other = pid === 'p1' ? 'p2' : 'p1';
-
-            // Hentikan animasi shuffle untuk player yang sudah selesai
-            if(pid === 'p1' && tpState.p1Engine) tpState.p1Engine.stopShuffle();
-            if(pid === 'p2' && tpState.p2Engine) tpState.p2Engine.stopShuffle();
 
             if(correct){
-                if(pid === 'p1'){ 
-                    tpState.p1Score += 10; 
-                    tpState.p1Done = true; 
-                    document.getElementById('tpP1S').textContent = tpState.p1Score; 
-                    // Tandai P1 sebagai pemenang round jika P2 belum selesai
-                    if(!tpState.p2Done) tpState.roundWinner = 'p1';
-                }
-                else{ 
-                    tpState.p2Score += 10; 
-                    tpState.p2Done = true; 
-                    document.getElementById('tpP2S').textContent = tpState.p2Score;
-                    // Tandai P2 sebagai pemenang round jika P1 belum selesai
-                    if(!tpState.p1Done) tpState.roundWinner = 'p2';
-                }
+                if(pid === 'p1'){ tpState.p1Score += 10; tpState.p1Done = true; document.getElementById('tpP1S').textContent = tpState.p1Score; }
+                else{ tpState.p2Score += 10; tpState.p2Done = true; document.getElementById('tpP2S').textContent = tpState.p2Score; }
                 sent.classList.add('result-correct');
                 fb.innerHTML = '<div class="fb-msg fb-correct"><i class="fas fa-check-circle"></i> Correct! +10</div>';
                 document.getElementById(pid + 'Check').disabled = true;
-                
-                // Tampilkan overlay lawan jika lawan belum selesai
-                if(!tpState[other + 'Done']){
-                    document.getElementById(other + 'Overlay').classList.add('show');
-                    document.getElementById(other + 'Overlay').querySelector('span').textContent = 'Opponent answered!';
-                }
+                if(pid === 'p1' && tpState.p1Engine) tpState.p1Engine.stopShuffle();
+                if(pid === 'p2' && tpState.p2Engine) tpState.p2Engine.stopShuffle();
+                document.getElementById(pid + 'Panel').classList.add('locked');
                 playClap();
-                
-                // Tampilkan banner pemenang segera setelah ada yang selesai
-                if(tpState.p1Done || tpState.p2Done) {
-                    tpShowRoundResult();
+                var other = pid === 'p1' ? 'p2' : 'p1';
+                if(!tpState[other + 'Done']){
+                    var overlay = document.getElementById(other + 'Overlay');
+                    overlay.querySelector('span').textContent = 'Opponent answered correctly!';
+                    overlay.classList.add('show');
                 }
+                if(tpState.p1Done && tpState.p2Done){ tpShowRoundResult(); }
             } else {
                 sent.classList.add('result-wrong');
                 fb.innerHTML = '<div class="fb-msg fb-wrong"><i class="fas fa-times-circle"></i> Wrong! Try again!</div>';
                 playHuhh();
-                // Tidak menonaktifkan check, pemain bisa mencoba lagi
-                // Tapi jangan biarkan mereka langsung cek tanpa memperbaiki
-                // Biarkan mereka menggunakan tombol Retry atau Reset
-            }
-
-            // Jika kedua pemain sudah selesai, tampilkan result
-            if(tpState.p1Done && tpState.p2Done){
-                tpShowRoundResult();
-            } else if(tpState.p1Done || tpState.p2Done){
-                document.getElementById(pid + 'Panel').classList.add('locked');
+                setTimeout(function(){ sent.classList.remove('result-wrong'); }, 600);
             }
         }
 
         function tpShowRoundResult(){
-            // Jika belum ada pemenang dan kedua pemain selesai
-            if(!tpState.roundWinner && tpState.p1Done && tpState.p2Done) {
-                tpState.roundWinner = 'both';
-            }
-            
             var banner = document.getElementById('roundBanner');
-            // Tampilkan pemenang round
-            if(tpState.roundWinner === 'p1'){
-                banner.className = 'round-banner show p1-win';
-                banner.innerHTML = '<i class="fas fa-trophy"></i> Player 1 answered first!';
+            if(tpState.p1Done && tpState.p2Done){
+                banner.className = 'round-banner show both-win';
+                banner.innerHTML = '<i class="fas fa-handshake"></i> Both players answered!';
                 document.getElementById('p1Panel').classList.add('winner');
-                confetti();
-            } else if(tpState.roundWinner === 'p2'){
-                banner.className = 'round-banner show p2-win';
-                banner.innerHTML = '<i class="fas fa-trophy"></i> Player 2 answered first!';
                 document.getElementById('p2Panel').classList.add('winner');
                 confetti();
-            } else if(tpState.p1Done && tpState.p2Done){
+            } else if(tpState.p1Done){
                 banner.className = 'round-banner show p1-win';
-                banner.innerHTML = '<i class="fas fa-handshake"></i> Both answered!';
+                banner.innerHTML = '<i class="fas fa-trophy"></i> Player 1 wins this round!';
+                document.getElementById('p1Panel').classList.add('winner');
+                confetti();
+            } else if(tpState.p2Done){
+                banner.className = 'round-banner show p2-win';
+                banner.innerHTML = '<i class="fas fa-trophy"></i> Player 2 wins this round!';
+                document.getElementById('p2Panel').classList.add('winner');
+                confetti();
             }
-            document.getElementById('tpNext').style.display = 'inline-flex';
             document.getElementById('p1Check').disabled = true;
             document.getElementById('p2Check').disabled = true;
-            
-            // Hentikan animasi shuffle untuk kedua player
             if(tpState.p1Engine) tpState.p1Engine.stopShuffle();
             if(tpState.p2Engine) tpState.p2Engine.stopShuffle();
         }
 
-        function tpNextRound(){
-            tpState.round++;
-            tpLoadRound();
-        }
-
-        function tpResetRound(){
-            if(tpState.p1Engine) {
-                tpState.p1Engine.stopShuffle();
-                tpState.p1Engine.returnAllToBank();
-            }
-            if(tpState.p2Engine) {
-                tpState.p2Engine.stopShuffle();
-                tpState.p2Engine.returnAllToBank();
-            }
-            document.getElementById('p1Sentence').className = 'tp-sentence';
-            document.getElementById('p2Sentence').className = 'tp-sentence';
-            document.getElementById('p1Feedback').innerHTML = '';
-            document.getElementById('p2Feedback').innerHTML = '';
-            document.getElementById('p1Check').disabled = false;
-            document.getElementById('p2Check').disabled = false;
-            document.getElementById('roundBanner').classList.remove('show', 'p1-win', 'p2-win');
-            document.getElementById('tpNext').style.display = 'none';
-            tpState.p1Done = false;
-            tpState.p2Done = false;
-            tpState.roundWinner = null;
-            
-            setTimeout(function(){
-                if(tpState.p1Engine) tpState.p1Engine.shuffleBank();
-                if(tpState.p2Engine) tpState.p2Engine.shuffleBank();
-            }, 300);
-        }
+        function tpNextRound(){ tpState.round++; tpLoadRound(); }
 
         function tpStartGame(){
-            tpState.round = 0;
-            tpState.p1Score = 0;
-            tpState.p2Score = 0;
-            tpState.p1Done = false;
-            tpState.p2Done = false;
-            tpState.roundWinner = null;
+            if(tpState.p1Engine){ tpState.p1Engine.destroy(); tpState.p1Engine = null; }
+            if(tpState.p2Engine){ tpState.p2Engine.destroy(); tpState.p2Engine = null; }
+            tpState.round = 0; tpState.p1Score = 0; tpState.p2Score = 0;
+            tpState.p1Done = false; tpState.p2Done = false; tpState.roundWinner = null;
             SENTENCES = getSentences();
             TOTAL = SENTENCES.length;
             tpState.totalRounds = Math.min(questionCountSetting, TOTAL);
             showScreen('twoPlayerGame');
-            
             setTimeout(function(){
                 tpState.p1Engine = initDragDrop(document.getElementById('p1Bank'), document.getElementById('p1Sentence'), document.getElementById('p1Empty'), null);
                 tpState.p2Engine = initDragDrop(document.getElementById('p2Bank'), document.getElementById('p2Sentence'), document.getElementById('p2Empty'), null);
@@ -1601,36 +1442,22 @@
             confetti();
         }
 
-        /* Fungsi kembali ke dashboard utama dari two player */
         function tpBackToMain() {
             if(confirm('Apakah Anda yakin ingin kembali ke menu utama? Progress akan hilang.')) {
+                if(tpState.p1Engine){ tpState.p1Engine.destroy(); tpState.p1Engine = null; }
+                if(tpState.p2Engine){ tpState.p2Engine.destroy(); tpState.p2Engine = null; }
                 showScreen('modeSelect');
-                // Reset state
-                tpState.round = 0;
-                tpState.p1Score = 0;
-                tpState.p2Score = 0;
-                tpState.p1Done = false;
-                tpState.p2Done = false;
-                tpState.current = null;
-                tpState.roundWinner = null;
-                if(tpState.p1Engine) {
-                    tpState.p1Engine.stopShuffle();
-                    tpState.p1Engine.returnAllToBank();
-                }
-                if(tpState.p2Engine) {
-                    tpState.p2Engine.stopShuffle();
-                    tpState.p2Engine.returnAllToBank();
-                }
+                tpState.round = 0; tpState.p1Score = 0; tpState.p2Score = 0;
+                tpState.p1Done = false; tpState.p2Done = false;
+                tpState.current = null; tpState.roundWinner = null;
                 document.getElementById('p1Feedback').innerHTML = '';
                 document.getElementById('p2Feedback').innerHTML = '';
                 document.getElementById('p1Sentence').className = 'tp-sentence';
                 document.getElementById('p2Sentence').className = 'tp-sentence';
-                document.getElementById('roundBanner').classList.remove('show', 'p1-win', 'p2-win');
-                document.getElementById('tpNext').style.display = 'none';
+                document.getElementById('roundBanner').classList.remove('show', 'p1-win', 'p2-win', 'both-win');
             }
         }
 
-        /* ===== DASHBOARD LOGIC ===== */
         var ADMIN_PW = 'guru123';
 
         function showStatus(elId, msg, type){
@@ -1662,11 +1489,12 @@
             if(pw === ADMIN_PW){
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboardSection').style.display = 'block';
-                document.getElementById('apiKeyInput').value = GROQ_API_KEY;
+                document.getElementById('proxyUrlInput').value = getProxyUrl();
                 document.getElementById('tenseSelect').value = currentTense;
                 document.getElementById('levelSelect').value = currentLevel;
                 document.getElementById('typeSelect').value = currentType;
                 document.getElementById('questionCount').value = questionCountSetting;
+                checkProxyStatus();
             } else {
                 showStatus('loginStatus', 'Password salah! Coba lagi.', 'error');
             }
@@ -1676,33 +1504,37 @@
             if(e.key === 'Enter') document.getElementById('loginBtn').click();
         });
 
-        /* Simpan Pengaturan */
         document.getElementById('saveSettingsBtn').addEventListener('click', function(){
-            GROQ_API_KEY = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('groq_api_key', GROQ_API_KEY);
+            var url = document.getElementById('proxyUrlInput').value.trim();
+            if(url && url.indexOf('http') !== 0){
+                showStatus('saveStatus', 'URL harus dimulai dengan https:// atau http://', 'error');
+                return;
+            }
+            setProxyUrl(url);
 
             currentTense = document.getElementById('tenseSelect').value;
             currentLevel = document.getElementById('levelSelect').value;
             currentType = document.getElementById('typeSelect').value;
             questionCountSetting = Math.max(5, Math.min(30, parseInt(document.getElementById('questionCount').value) || 10));
-
             localStorage.setItem('selected_tense', currentTense);
             localStorage.setItem('selected_level', currentLevel);
             localStorage.setItem('selected_type', currentType);
             localStorage.setItem('selected_count', questionCountSetting);
-
             SENTENCES = getSentences();
             TOTAL = SENTENCES.length;
             updateTenseIndicator();
-
-            showStatus('saveStatus', 'Pengaturan berhasil disimpan! Tenses: ' + (TENSE_LABELS[currentTense] || '') + ', Level: ' + currentLevel, 'success');
+            showStatus('saveStatus', 'Pengaturan berhasil disimpan!', 'success');
+            checkProxyStatus();
         });
 
-        /* Tombol Kembali ke Dashboard Utama */
         document.getElementById('backToDashboardBtn').addEventListener('click', function(){
-            /* Pastikan pengaturan tersimpan dulu */
-            GROQ_API_KEY = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('groq_api_key', GROQ_API_KEY);
+            var url = document.getElementById('proxyUrlInput').value.trim();
+            if(url && url.indexOf('http') !== 0){
+                showStatus('saveStatus', 'URL harus dimulai dengan https:// atau http://', 'error');
+                return;
+            }
+            if(url) setProxyUrl(url);
+
             currentTense = document.getElementById('tenseSelect').value;
             currentLevel = document.getElementById('levelSelect').value;
             currentType = document.getElementById('typeSelect').value;
@@ -1714,40 +1546,28 @@
             SENTENCES = getSentences();
             TOTAL = SENTENCES.length;
             updateTenseIndicator();
-
-            /* Tutup modal dan kembali ke dashboard utama */
             document.getElementById('dashboardModal').classList.remove('active');
             showScreen('modeSelect');
         });
 
-        /* Generate dengan AI */
         document.getElementById('generateBtn').addEventListener('click', async function(){
             var btn = this;
-            
-            // Ambil API Key dari input
-            var apiKeyInput = document.getElementById('apiKeyInput');
-            GROQ_API_KEY = apiKeyInput.value.trim();
-            
-            // Validasi API Key
-            if(!GROQ_API_KEY) {
-                showStatus('generateStatus', 'Mohon masukkan Groq API Key terlebih dahulu!', 'error');
-                apiKeyInput.focus();
+            var url = document.getElementById('proxyUrlInput').value.trim();
+            if(!url){
+                showStatus('generateStatus', 'Mohon isi URL Supabase Edge Function terlebih dahulu.', 'error');
+                document.getElementById('proxyUrlInput').focus();
                 return;
             }
-            
-            if(GROQ_API_KEY.length < 10) {
-                showStatus('generateStatus', 'API Key tidak valid. Pastikan Anda memasukkan API Key yang benar dari console.groq.com', 'error');
-                apiKeyInput.focus();
+            if(url.indexOf('http') !== 0){
+                showStatus('generateStatus', 'URL harus dimulai dengan https:// atau http://', 'error');
                 return;
             }
-            
-            localStorage.setItem('groq_api_key', GROQ_API_KEY);
-            
+            setProxyUrl(url);
+
             currentTense = document.getElementById('tenseSelect').value;
             currentLevel = document.getElementById('levelSelect').value;
             currentType = document.getElementById('typeSelect').value;
             questionCountSetting = Math.max(5, Math.min(30, parseInt(document.getElementById('questionCount').value) || 10));
-            
             localStorage.setItem('selected_tense', currentTense);
             localStorage.setItem('selected_level', currentLevel);
             localStorage.setItem('selected_type', currentType);
@@ -1758,7 +1578,7 @@
             document.getElementById('generateStatus').style.display = 'none';
 
             try{
-                var questions = await generateQuestionsWithGroq(currentLevel, currentType, questionCountSetting, currentTense);
+                var questions = await generateQuestionsWithProxy(currentLevel, currentType, questionCountSetting, currentTense);
                 ALL_SENTENCES[currentTense] = questions;
                 SENTENCES = getSentences();
                 TOTAL = SENTENCES.length;
@@ -1773,51 +1593,6 @@
             btn.innerHTML = '<i class="fas fa-magic"></i> Generate Soal dengan AI';
         });
 
-        document.getElementById('resetDefaultBtn').addEventListener('click', function(){
-            ALL_SENTENCES.simple_present = [
-                {text:"The cat sleeps on the mat",type:"affirmative"},{text:"They play in the park",type:"affirmative"},
-                {text:"He drinks water every morning",type:"affirmative"},{text:"We eat lunch at noon",type:"affirmative"},
-                {text:"She does not like spicy food",type:"negative"},{text:"They do not go to school on Sunday",type:"negative"},
-                {text:"Do you like ice cream ?",type:"interrogative"},{text:"Does she read books every day ?",type:"interrogative"}
-            ];
-            ALL_SENTENCES.simple_past = [
-                {text:"She visited her grandmother last week",type:"affirmative"},{text:"They played football yesterday",type:"affirmative"},
-                {text:"She did not go to school yesterday",type:"negative"},{text:"Did you go to school yesterday ?",type:"interrogative"}
-            ];
-            ALL_SENTENCES.present_continuous = [
-                {text:"She is reading a book now",type:"affirmative"},{text:"They are playing in the garden",type:"affirmative"},
-                {text:"She is not reading a book now",type:"negative"},{text:"Is she reading a book now ?",type:"interrogative"}
-            ];
-            ALL_SENTENCES.past_continuous = [
-                {text:"She was reading a book at that time",type:"affirmative"},{text:"They were playing when it rained",type:"affirmative"},
-                {text:"She was not reading at that time",type:"negative"},{text:"Was she reading at that time ?",type:"interrogative"}
-            ];
-            ALL_SENTENCES.simple_future = [
-                {text:"She will visit her grandmother tomorrow",type:"affirmative"},{text:"They will play football next week",type:"affirmative"},
-                {text:"She will not go to school tomorrow",type:"negative"},{text:"Will you go to school tomorrow ?",type:"interrogative"}
-            ];
-            ALL_SENTENCES.future_continuous = [
-                {text:"She will be reading a book at eight",type:"affirmative"},{text:"They will be playing at that time",type:"affirmative"},
-                {text:"She will not be reading at eight",type:"negative"},{text:"Will she be reading at eight ?",type:"interrogative"}
-            ];
-            currentTense = 'simple_present';
-            currentLevel = 'medium';
-            currentType = 'all';
-            questionCountSetting = 10;
-            localStorage.removeItem('selected_tense');
-            localStorage.removeItem('selected_level');
-            localStorage.removeItem('selected_type');
-            localStorage.removeItem('selected_count');
-            SENTENCES = getSentences();
-            TOTAL = SENTENCES.length;
-            updateTenseIndicator();
-            document.getElementById('tenseSelect').value = currentTense;
-            document.getElementById('levelSelect').value = currentLevel;
-            document.getElementById('typeSelect').value = currentType;
-            document.getElementById('questionCount').value = questionCountSetting;
-            showStatus('generateStatus', 'Pengaturan sudah di-reset ke default.', 'info');
-        });
-
         document.getElementById('logoutBtn').addEventListener('click', function(){
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('loginSection').style.display = 'block';
@@ -1825,22 +1600,15 @@
             document.getElementById('saveStatus').style.display = 'none';
         });
 
-        /* ===== EVENT BINDINGS ===== */
         document.getElementById('btnSolo').addEventListener('click', spStartGame);
         document.getElementById('btnRace').addEventListener('click', tpStartGame);
 
         document.getElementById('spMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
         document.getElementById('tpMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
-
-        // Tombol kembali ke main menu dari single player
         document.getElementById('spBackMain').addEventListener('click', spBackToMain);
-        
-        // Tombol kembali ke main menu dari two player
         document.getElementById('tpBackMain').addEventListener('click', tpBackToMain);
 
-        // Single player event bindings
         document.getElementById('spCheck').addEventListener('click', spCheckAnswer);
-        document.getElementById('spReset').addEventListener('click', spResetQuestion);
         document.getElementById('spRetry').addEventListener('click', spRetryQuestion);
         document.getElementById('spNext').addEventListener('click', spNextQuestion);
         document.getElementById('spGenerate').addEventListener('click', function(){
@@ -1852,34 +1620,10 @@
             spLoadQuestion();
         });
 
-        // Two player event bindings
         document.getElementById('p1Check').addEventListener('click', function(){ tpCheckPlayer('p1'); });
         document.getElementById('p2Check').addEventListener('click', function(){ tpCheckPlayer('p2'); });
         document.getElementById('p1Retry').addEventListener('click', function(){ tpRetryPlayer('p1'); });
         document.getElementById('p2Retry').addEventListener('click', function(){ tpRetryPlayer('p2'); });
-        document.getElementById('p1Reset').addEventListener('click', function(){ 
-            if(tpState.p1Engine) {
-                tpState.p1Engine.returnAllToBank();
-                document.getElementById('p1Sentence').className = 'tp-sentence';
-                document.getElementById('p1Feedback').innerHTML = '';
-                document.getElementById('p1Check').disabled = false;
-                setTimeout(function(){
-                    if(tpState.p1Engine) tpState.p1Engine.shuffleBank();
-                }, 300);
-            }
-        });
-        document.getElementById('p2Reset').addEventListener('click', function(){ 
-            if(tpState.p2Engine) {
-                tpState.p2Engine.returnAllToBank();
-                document.getElementById('p2Sentence').className = 'tp-sentence';
-                document.getElementById('p2Feedback').innerHTML = '';
-                document.getElementById('p2Check').disabled = false;
-                setTimeout(function(){
-                    if(tpState.p2Engine) tpState.p2Engine.shuffleBank();
-                }, 300);
-            }
-        });
-        document.getElementById('tpReset').addEventListener('click', tpResetRound);
         document.getElementById('tpNext').addEventListener('click', tpNextRound);
         document.getElementById('tpGenerate').addEventListener('click', function(){
             SENTENCES = getSentences();
@@ -1891,13 +1635,11 @@
             tpLoadRound();
         });
 
-        // End screen buttons
         document.getElementById('spAgain').addEventListener('click', spStartGame);
         document.getElementById('spEndMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
         document.getElementById('champAgain').addEventListener('click', tpStartGame);
         document.getElementById('champMenu').addEventListener('click', function(){ showScreen('modeSelect'); });
 
-        /* Fix: Initialize spState.totalQuestions */
         spState.totalQuestions = Math.min(questionCountSetting, TOTAL);
 
     })();
